@@ -130,6 +130,7 @@ class YtDlpService {
                 '--concurrent-fragments', '4',
                 '--buffer-size', '64k',
                 '--no-mtime',
+                '--progress-template', 'download-status:%(progress._percent_str)s|%(progress._total_bytes_str)s|%(progress._speed_str)s|%(progress._eta_str)s',
                 '--user-agent', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
                 '--socket-timeout', '15'
             ];
@@ -168,10 +169,20 @@ class YtDlpService {
             args.push('-o', outputTemplate);
             args.push(jobConfig.url);
 
+            // Send initial progress update immediately on spawn
+            onProgress({
+                progress: 1,
+                speed: 'Connecting...',
+                eta: 'Starting...',
+                totalSize: 'Calculating...',
+                status: 'DOWNLOADING'
+            });
+
             const child = spawn(ytdlp, args, { windowsHide: true });
             let finalFilePath = '';
             let lastErrorMsg = '';
             let stdoutBuffer = '';
+            let maxProgress = 1;
 
             child.stdout.on('data', (chunk) => {
                 stdoutBuffer += chunk.toString();
@@ -189,32 +200,50 @@ class YtDlpService {
                         }
                     }
 
-                    // Parse progress
-                    const progressMatch = trimmed.match(/\[download\]\s+([\d.]+)%\s+of\s+~?(\S+)\s+at\s+(\S+)\s+ETA\s+(\S+)/i);
-                    const completedMatch = trimmed.match(/\[download\]\s+100%\s+of\s+~?(\S+)\s+in\s+(\S+)/i);
+                    // 1. Structured progress template parser
+                    if (trimmed.startsWith('download-status:')) {
+                        const parts = trimmed.substring(16).split('|');
+                        const rawPercent = parseFloat(parts[0] ? parts[0].replace(/%/g, '').trim() : '0') || 0;
+                        const totalSize = (parts[1] && parts[1] !== 'NA') ? parts[1].trim() : '';
+                        const speed = (parts[2] && parts[2] !== 'NA') ? parts[2].trim() : 'Connecting...';
+                        const eta = (parts[3] && parts[3] !== 'NA') ? parts[3].trim() : '00:00';
 
-                    if (progressMatch) {
-                        const progress = Math.round(parseFloat(progressMatch[1]));
-                        const totalSize = progressMatch[2];
-                        const speed = progressMatch[3];
-                        const eta = progressMatch[4];
+                        const calculatedProgress = Math.round(rawPercent);
+                        if (calculatedProgress > maxProgress && calculatedProgress < 100) {
+                            maxProgress = calculatedProgress;
+                        }
 
                         onProgress({
-                            progress,
+                            progress: maxProgress,
                             speed,
                             eta,
                             totalSize,
-                            status: progress < 100 ? 'DOWNLOADING' : 'PROCESSING'
+                            status: maxProgress < 100 ? 'DOWNLOADING' : 'PROCESSING'
                         });
-                    } else if (completedMatch) {
+                        continue;
+                    }
+
+                    // 2. Standard regex fallback parser
+                    const percentMatch = trimmed.match(/\[download\]\s+([\d.]+)%/i);
+                    const speedMatch = trimmed.match(/at\s+([\d.]+\s*\S+)/i);
+                    const etaMatch = trimmed.match(/ETA\s+([\d:]+)/i);
+                    const sizeMatch = trimmed.match(/of\s+~?([\d.]+\s*\S+)/i);
+
+                    if (percentMatch) {
+                        const rawPercent = parseFloat(percentMatch[1]) || 0;
+                        const progress = Math.round(rawPercent);
+                        if (progress > maxProgress && progress < 100) {
+                            maxProgress = progress;
+                        }
                         onProgress({
-                            progress: 100,
-                            speed: 'Done',
-                            eta: '00:00',
-                            totalSize: completedMatch[1],
-                            status: 'PROCESSING'
+                            progress: maxProgress,
+                            speed: speedMatch ? speedMatch[1] : 'Downloading...',
+                            eta: etaMatch ? etaMatch[1] : '00:00',
+                            totalSize: sizeMatch ? sizeMatch[1] : '',
+                            status: maxProgress < 100 ? 'DOWNLOADING' : 'PROCESSING'
                         });
                     } else if (trimmed.includes('[ExtractAudio]') || trimmed.includes('[Merger]')) {
+                        maxProgress = Math.max(maxProgress, 95);
                         onProgress({
                             progress: 95,
                             speed: 'Converting...',

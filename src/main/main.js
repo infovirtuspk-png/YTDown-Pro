@@ -11,6 +11,7 @@ const extensionServer = require('./services/extension-server');
 const gotTheLock = app.requestSingleInstanceLock();
 if (!gotTheLock) {
     app.quit();
+    process.exit(0);
 } else {
     app.on('second-instance', (event, commandLine) => {
         if (windowManager.mainWindow) {

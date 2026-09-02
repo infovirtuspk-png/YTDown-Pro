@@ -34,6 +34,9 @@ class UniversalDownloader {
             downloadedBytes = stats.size;
         }
 
+        let retryCount = 0;
+        const maxRetries = 3;
+
         const jobControl = {
             req: null,
             fileStream: null,
@@ -42,7 +45,7 @@ class UniversalDownloader {
         };
         this.activeJobs.set(uuid, jobControl);
 
-        const startTime = Date.now();
+        let startTime = Date.now();
         let lastTime = startTime;
         let lastBytes = downloadedBytes;
 
@@ -52,28 +55,45 @@ class UniversalDownloader {
                 return;
             }
 
-            if (jobControl.isCancelled) return;
+            if (jobControl.isCancelled || jobControl.isPaused) return;
 
-            const parsedUrl = new URL(currentUrl);
+            let parsedUrl;
+            try {
+                parsedUrl = new URL(currentUrl);
+            } catch (e) {
+                return onError(new Error('Invalid download URL format'));
+            }
+
             const client = parsedUrl.protocol === 'https:' ? https : http;
 
             const headers = {
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) YTDownPro/1.0'
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
+                'Accept': '*/*',
+                'Connection': 'keep-alive'
             };
 
             if (downloadedBytes > 0) {
                 headers['Range'] = `bytes=${downloadedBytes}-`;
             }
 
-            const req = client.get(currentUrl, { headers }, (res) => {
-                // Handle HTTP Redirects (301, 302, 307, 308)
-                if ([301, 302, 307, 308].includes(res.statusCode) && res.headers.location) {
-                    const redirectUrl = new URL(res.headers.location, currentUrl).href;
-                    makeRequest(redirectUrl, redirectCount + 1);
-                    return;
+            const reqOptions = {
+                headers,
+                rejectUnauthorized: false
+            };
+
+            const req = client.get(currentUrl, reqOptions, (res) => {
+                // Handle HTTP Redirects (301, 302, 303, 307, 308)
+                if ([301, 302, 303, 307, 308].includes(res.statusCode) && res.headers.location) {
+                    try {
+                        const redirectUrl = new URL(res.headers.location, currentUrl).href;
+                        res.resume();
+                        makeRequest(redirectUrl, redirectCount + 1);
+                        return;
+                    } catch (e) {}
                 }
 
                 if (res.statusCode !== 200 && res.statusCode !== 206) {
+                    res.resume();
                     onError(new Error(`HTTP Server responded with status code ${res.statusCode}`));
                     return;
                 }
@@ -84,6 +104,18 @@ class UniversalDownloader {
                 const fileFlags = downloadedBytes > 0 ? 'a' : 'w';
                 const fileStream = fs.createWriteStream(tempPath, { flags: fileFlags });
                 jobControl.fileStream = fileStream;
+
+                // Send initial 0% / current status event immediately
+                onProgress({
+                    uuid,
+                    downloadedBytes,
+                    totalBytes,
+                    progress: totalBytes > 0 ? Math.min(100, Math.round((downloadedBytes / totalBytes) * 100)) : 0,
+                    speed: '0 KB/s',
+                    eta: 'Calculating...',
+                    totalSize: this.formatBytes(totalBytes),
+                    status: 'DOWNLOADING'
+                });
 
                 res.on('data', (chunk) => {
                     if (jobControl.isCancelled || jobControl.isPaused) {
@@ -97,7 +129,8 @@ class UniversalDownloader {
                     const now = Date.now();
                     const timeDiff = (now - lastTime) / 1000;
 
-                    if (timeDiff >= 0.5) {
+                    // 100ms real-time high-precision progress updates
+                    if (timeDiff >= 0.1) {
                         const bytesDiff = downloadedBytes - lastBytes;
                         const speedBps = bytesDiff / timeDiff;
                         const percent = totalBytes > 0 ? Math.min(100, Math.round((downloadedBytes / totalBytes) * 100)) : 0;
@@ -110,7 +143,9 @@ class UniversalDownloader {
                             totalBytes,
                             progress: percent,
                             speed: this.formatSpeed(speedBps),
-                            eta: this.formatEta(eta)
+                            eta: this.formatEta(eta),
+                            totalSize: this.formatBytes(totalBytes),
+                            status: percent < 100 ? 'DOWNLOADING' : 'PROCESSING'
                         });
 
                         lastTime = now;
@@ -143,13 +178,29 @@ class UniversalDownloader {
 
                 res.on('error', (err) => {
                     fileStream.end();
-                    onError(err);
+                    handleRequestError(err);
                 });
             });
 
-            req.on('error', (err) => {
+            const handleRequestError = (err) => {
                 if (jobControl.isCancelled || jobControl.isPaused) return;
-                onError(err);
+
+                // Auto retry on connection drop / ECONNRESET if retry limit not exceeded
+                if (retryCount < maxRetries) {
+                    retryCount++;
+                    console.warn(`Connection dropped for job ${uuid} (${err.message}). Retrying ${retryCount}/${maxRetries}...`);
+                    setTimeout(() => {
+                        if (!jobControl.isCancelled && !jobControl.isPaused) {
+                            makeRequest(currentUrl, redirectCount);
+                        }
+                    }, 1000);
+                } else {
+                    onError(err);
+                }
+            };
+
+            req.on('error', (err) => {
+                handleRequestError(err);
             });
 
             jobControl.req = req;
@@ -175,6 +226,14 @@ class UniversalDownloader {
             if (control.fileStream) control.fileStream.end();
             this.activeJobs.delete(uuid);
         }
+    }
+
+    formatBytes(bytes) {
+        if (!bytes || bytes <= 0) return '';
+        if (bytes >= 1073741824) return `${(bytes / 1073741824).toFixed(2)} GB`;
+        if (bytes >= 1048576) return `${(bytes / 1048576).toFixed(1)} MB`;
+        if (bytes >= 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+        return `${bytes} B`;
     }
 
     formatSpeed(bps) {

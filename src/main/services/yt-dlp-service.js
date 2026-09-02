@@ -15,7 +15,11 @@ class YtDlpService {
                 '--dump-json',
                 '--no-playlist',
                 '--no-warnings',
-                '--no-check-certificates'
+                '--no-check-certificates',
+                '--prefer-insecure',
+                '--geo-bypass',
+                '--socket-timeout', '10',
+                '--user-agent', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36'
             ];
 
             if (ffmpeg) {
@@ -118,7 +122,17 @@ class YtDlpService {
                 return reject(new Error('yt-dlp engine is unavailable.'));
             }
 
-            const args = ['--newline', '--no-warnings', '--no-check-certificates'];
+            const args = [
+                '--newline',
+                '--no-warnings',
+                '--no-check-certificates',
+                '--prefer-insecure',
+                '--concurrent-fragments', '4',
+                '--buffer-size', '64k',
+                '--no-mtime',
+                '--user-agent', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
+                '--socket-timeout', '15'
+            ];
 
             if (ffmpeg) {
                 args.push('--ffmpeg-location', path.dirname(ffmpeg));
@@ -157,9 +171,13 @@ class YtDlpService {
             const child = spawn(ytdlp, args, { windowsHide: true });
             let finalFilePath = '';
             let lastErrorMsg = '';
+            let stdoutBuffer = '';
 
             child.stdout.on('data', (chunk) => {
-                const lines = chunk.toString().split('\n');
+                stdoutBuffer += chunk.toString();
+                const lines = stdoutBuffer.split('\n');
+                stdoutBuffer = lines.pop(); // keep partial line in buffer
+
                 for (const line of lines) {
                     const trimmed = line.trim();
 
@@ -172,7 +190,9 @@ class YtDlpService {
                     }
 
                     // Parse progress
-                    const progressMatch = trimmed.match(/\[download\]\s+(\d+\.\d+)%\s+of\s+(\S+)\s+at\s+(\S+)\s+ETA\s+(\S+)/);
+                    const progressMatch = trimmed.match(/\[download\]\s+([\d.]+)%\s+of\s+~?(\S+)\s+at\s+(\S+)\s+ETA\s+(\S+)/i);
+                    const completedMatch = trimmed.match(/\[download\]\s+100%\s+of\s+~?(\S+)\s+in\s+(\S+)/i);
+
                     if (progressMatch) {
                         const progress = Math.round(parseFloat(progressMatch[1]));
                         const totalSize = progressMatch[2];
@@ -185,6 +205,14 @@ class YtDlpService {
                             eta,
                             totalSize,
                             status: progress < 100 ? 'DOWNLOADING' : 'PROCESSING'
+                        });
+                    } else if (completedMatch) {
+                        onProgress({
+                            progress: 100,
+                            speed: 'Done',
+                            eta: '00:00',
+                            totalSize: completedMatch[1],
+                            status: 'PROCESSING'
                         });
                     } else if (trimmed.includes('[ExtractAudio]') || trimmed.includes('[Merger]')) {
                         onProgress({

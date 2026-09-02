@@ -73,6 +73,7 @@ class DownloadsController {
                 item.totalSize = data.totalSize;
                 item.status = data.status || 'DOWNLOADING';
                 this.updateProgressCard(data);
+                this.updateGlobalNetworkMonitor();
             }
         });
 
@@ -80,9 +81,11 @@ class DownloadsController {
             const item = this.downloads.find(d => d.job_uuid === data.job_uuid);
             if (item) {
                 item.status = 'PAUSED';
+                item.speed = '0 KB/s';
             }
             this.renderList();
             this.updateBadge();
+            this.updateGlobalNetworkMonitor();
         });
 
         window.ytdown.onDownloadResumed && window.ytdown.onDownloadResumed((data) => {
@@ -92,6 +95,7 @@ class DownloadsController {
             }
             this.renderList();
             this.updateBadge();
+            this.updateGlobalNetworkMonitor();
         });
 
         window.ytdown.onDownloadCompleted((data) => {
@@ -99,50 +103,62 @@ class DownloadsController {
             if (item) {
                 item.status = 'COMPLETED';
                 item.progress = 100;
+                item.speed = 'Done';
                 item.file_path = data.filePath;
                 item.file_name = data.fileName;
             }
             this.renderList();
             this.updateBadge();
+            this.updateGlobalNetworkMonitor();
         });
 
         window.ytdown.onDownloadFailed((data) => {
             const item = this.downloads.find(d => d.job_uuid === data.job_uuid);
             if (item) {
                 item.status = 'FAILED';
+                item.speed = '0 KB/s';
                 item.error_message = data.errorMessage;
             }
             this.renderList();
             this.updateBadge();
+            this.updateGlobalNetworkMonitor();
         });
 
         window.ytdown.onDownloadCancelled((data) => {
             const item = this.downloads.find(d => d.job_uuid === data.job_uuid);
             if (item) {
                 item.status = 'CANCELLED';
+                item.speed = '0 KB/s';
             }
             this.renderList();
             this.updateBadge();
+            this.updateGlobalNetworkMonitor();
         });
 
         window.ytdown.onDownloadDeleted && window.ytdown.onDownloadDeleted((data) => {
             this.downloads = this.downloads.filter(d => d.job_uuid !== data.job_uuid);
             this.renderList();
             this.updateBadge();
+            this.updateGlobalNetworkMonitor();
         });
 
         window.ytdown.onDownloadClearedCompleted && window.ytdown.onDownloadClearedCompleted(() => {
             this.downloads = this.downloads.filter(d => ['QUEUED', 'DOWNLOADING', 'CONVERTING', 'PAUSED'].includes(d.status));
             this.renderList();
             this.updateBadge();
+            this.updateGlobalNetworkMonitor();
         });
 
         window.ytdown.onDownloadQueuePaused && window.ytdown.onDownloadQueuePaused(() => {
             this.downloads.forEach(d => {
-                if (d.status === 'DOWNLOADING') d.status = 'PAUSED';
+                if (d.status === 'DOWNLOADING') {
+                    d.status = 'PAUSED';
+                    d.speed = '0 KB/s';
+                }
             });
             this.renderList();
             this.updateBadge();
+            this.updateGlobalNetworkMonitor();
         });
 
         window.ytdown.onDownloadQueueResumed && window.ytdown.onDownloadQueueResumed(() => {
@@ -155,6 +171,7 @@ class DownloadsController {
             this.downloads = await window.ytdown.getDownloads();
             this.renderList();
             this.updateBadge();
+            this.updateGlobalNetworkMonitor();
         } catch (err) {
             console.error('Failed fetching downloads:', err);
         }
@@ -167,6 +184,53 @@ class DownloadsController {
             badge.textContent = activeCount;
             badge.style.display = activeCount > 0 ? 'inline-block' : 'none';
         }
+    }
+
+    updateGlobalNetworkMonitor() {
+        const activeItems = this.downloads.filter(d => d.status === 'DOWNLOADING' || d.status === 'CONVERTING');
+        const activeCountLabel = document.getElementById('network-active-count');
+        const speedLabel = document.getElementById('network-speed-label');
+
+        if (activeCountLabel) {
+            activeCountLabel.textContent = `${activeItems.length} Active`;
+        }
+
+        if (!speedLabel) return;
+
+        if (activeItems.length === 0) {
+            speedLabel.textContent = '0 KB/s';
+            return;
+        }
+
+        // Sum up active speeds in B/s
+        let totalBps = 0;
+        for (const item of activeItems) {
+            if (!item.speed) continue;
+            totalBps += this.parseSpeedToBps(item.speed);
+        }
+
+        speedLabel.textContent = this.formatSpeedBps(totalBps);
+    }
+
+    parseSpeedToBps(speedStr) {
+        if (typeof speedStr !== 'string') return 0;
+        const str = speedStr.trim();
+        const match = str.match(/([\d.]+)\s*([A-Za-z/]+)/);
+        if (!match) return 0;
+
+        const val = parseFloat(match[1]);
+        const unit = match[2].toLowerCase();
+
+        if (unit.includes('gb') || unit.includes('gib')) return val * 1073741824;
+        if (unit.includes('mb') || unit.includes('mib')) return val * 1048576;
+        if (unit.includes('kb') || unit.includes('kib')) return val * 1024;
+        return val;
+    }
+
+    formatSpeedBps(bps) {
+        if (bps >= 1048576) return `${(bps / 1048576).toFixed(2)} MB/s`;
+        if (bps >= 1024) return `${(bps / 1024).toFixed(1)} KB/s`;
+        return `${Math.round(bps)} B/s`;
     }
 
     renderList() {

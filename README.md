@@ -2,7 +2,7 @@
 
 <p align="center">
   <a href="https://github.com/infovirtuspk-png/YTDown-Pro/releases/download/v1.0.0/YTDown.Pro.Setup.1.0.0.exe" target="_blank" rel="noopener noreferrer">
-    <img src="https://img.shields.io/badge/📥%20DOWNLOAD%20YTDown%20Pro%20Setup%20v1.0.0%20(.EXE)-0078D6?style=for-the-badge&logo=windows&logoColor=white" alt="Download Windows Installer (.exe)" height="48">
+    <img src="https://img.shields.io/badge/📥%20DOWNLOAD%20YTDown%20Pro%20Setup%20v1.0.0%20(.EXE)-0078D6?style=for-the-badge&logo=windows&logoColor=white" alt="Download Windows Installer (.exe)" height="50">
   </a>
 </p>
 
@@ -26,12 +26,17 @@ Click either link or button below to immediately start downloading the official 
 
 <p align="center">
   <a href="https://github.com/infovirtuspk-png/YTDown-Pro/releases/download/v1.0.0/YTDown.Pro.Setup.1.0.0.exe" target="_blank" rel="noopener noreferrer">
-    <img src="https://img.shields.io/badge/⚡%20CLICK%20HERE%20TO%20DOWNLOAD%20YTDown.Pro.Setup.1.0.0.exe%20(283%20MB)-0078D6?style=for-the-badge&logo=windows&logoColor=white" alt="Download YTDown Pro Setup Executable" height="52">
+    <img src="https://img.shields.io/badge/⚡%20CLICK%20HERE%20TO%20DOWNLOAD%20YTDown.Pro.Setup.1.0.0.exe%20(283%20MB)-0078D6?style=for-the-badge&logo=windows&logoColor=white" alt="Download YTDown Pro Setup Executable" height="54">
   </a>
 </p>
 
 ### 🔗 Direct File Link:
 👉 [**https://github.com/infovirtuspk-png/YTDown-Pro/releases/download/v1.0.0/YTDown.Pro.Setup.1.0.0.exe**](https://github.com/infovirtuspk-png/YTDown-Pro/releases/download/v1.0.0/YTDown.Pro.Setup.1.0.0.exe)
+
+### 🔒 Package Integrity (SHA-256):
+```text
+67b9a471aef0434557f084cf862815b3bb5a777bf53e47233507929d5febba4c
+```
 
 > **Note**: Pre-packaged with `yt-dlp`, `FFmpeg`, `FFprobe`, and the companion Chrome/Edge extension. No extra setup required!
 

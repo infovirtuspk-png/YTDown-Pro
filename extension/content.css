@@ -1,0 +1,257 @@
+/* Floating Quick Download Badge & Magnetic Grabber Styling */
+#ytdownpro-floating-badge {
+    position: fixed;
+    top: 80px;
+    right: 24px;
+    z-index: 999999;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    user-select: none;
+    transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease;
+}
+
+#ytdownpro-floating-badge.ytdownpro-dragging {
+    opacity: 0.88;
+    transform: scale(1.04);
+    cursor: grabbing;
+    transition: none;
+}
+
+#ytdownpro-floating-badge.ytdownpro-badge-exit {
+    opacity: 0;
+    transform: scale(0.7) translateY(-10px);
+}
+
+.ytdownpro-badge-inner {
+    background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(30, 27, 75, 0.95) 100%);
+    color: #ffffff;
+    border: 1.5px solid rgba(99, 102, 241, 0.6);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    padding: 6px 12px 6px 8px;
+    border-radius: 9999px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), 0 0 20px rgba(99, 102, 241, 0.35);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.ytdownpro-badge-drag-handle {
+    cursor: grab;
+    color: #818cf8;
+    padding: 2px 4px;
+    font-size: 13px;
+    opacity: 0.7;
+    transition: opacity 0.15s;
+    letter-spacing: -1px;
+}
+
+.ytdownpro-badge-drag-handle:hover {
+    opacity: 1;
+}
+
+.ytdownpro-badge-action {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 60%, #ec4899 100%);
+    padding: 6px 14px;
+    border-radius: 9999px;
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.ytdownpro-badge-action:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(99, 102, 241, 0.6);
+}
+
+.ytdownpro-badge-icon {
+    font-size: 14px;
+}
+
+.ytdownpro-badge-text {
+    font-size: 12px;
+    letter-spacing: 0.2px;
+    white-space: nowrap;
+}
+
+.ytdownpro-badge-close {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: #cbd5e1;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    cursor: pointer;
+    line-height: 1;
+    padding: 0;
+    transition: all 0.15s ease;
+    margin-left: 2px;
+}
+
+.ytdownpro-badge-close:hover {
+    background: #ef4444;
+    border-color: #ef4444;
+    color: #ffffff;
+    transform: scale(1.1);
+}
+
+/* Toast Notifications */
+#ytdownpro-toast {
+    position: fixed;
+    bottom: 28px;
+    right: 28px;
+    z-index: 9999999;
+    background: #1e1b4b;
+    color: #ffffff;
+    border: 1px solid #6366f1;
+    padding: 12px 20px;
+    border-radius: 12px;
+    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.4);
+    font-family: sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    pointer-events: none;
+}
+
+#ytdownpro-toast.ytdownpro-toast-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Magnetic Grabber Card */
+#ytdownpro-magnetic-pop {
+    position: fixed;
+    bottom: 28px;
+    right: 28px;
+    z-index: 9999999;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.ytdownpro-pop-card {
+    background: #0f172a;
+    color: #f8fafc;
+    border: 1.5px solid #6366f1;
+    border-radius: 16px;
+    width: 340px;
+    padding: 16px;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6);
+    animation: ytdownpro-slide-in 0.3s ease;
+}
+
+@keyframes ytdownpro-slide-in {
+    from { opacity: 0; transform: translateY(30px) scale(0.95); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.ytdownpro-pop-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+.ytdownpro-close-btn {
+    margin-left: auto;
+    background: transparent;
+    border: none;
+    color: #94a3b8;
+    font-size: 18px;
+    cursor: pointer;
+}
+
+.ytdownpro-meta-badge {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(99, 102, 241, 0.15);
+    border: 1px solid rgba(99, 102, 241, 0.35);
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 600;
+    color: #a5b4fc;
+    margin-bottom: 8px;
+}
+
+.ytdownpro-meta-badge .badge-type {
+    margin-left: auto;
+    background: #6366f1;
+    color: #fff;
+    padding: 1px 6px;
+    border-radius: 99px;
+    font-size: 9px;
+    text-transform: uppercase;
+}
+
+.ytdownpro-pop-body p {
+    margin: 0 0 6px 0;
+    font-size: 11px;
+    color: #94a3b8;
+}
+
+.ytdownpro-url-preview {
+    background: #1e293b;
+    color: #818cf8;
+    padding: 8px 10px;
+    border-radius: 8px;
+    font-size: 11px;
+    word-break: break-all;
+    max-height: 48px;
+    overflow: hidden;
+    margin-bottom: 12px;
+}
+
+.ytdownpro-pop-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.ytdownpro-btn-send {
+    flex: 1;
+    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+    color: #ffffff;
+    border: none;
+    padding: 10px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 12px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.ytdownpro-btn-send:hover {
+    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+}
+
+.ytdownpro-btn-ignore {
+    background: rgba(255, 255, 255, 0.08);
+    color: #94a3b8;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 12px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.ytdownpro-btn-ignore:hover {
+    background: rgba(255, 255, 255, 0.15);
+    color: #f8fafc;
+}

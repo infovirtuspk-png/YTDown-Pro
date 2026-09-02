@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YTDown Pro Companion</title>
+    <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+    <div class="popup-container">
+        <!-- Header -->
+        <header class="popup-header">
+            <div class="brand">
+                <img src="icons/icon48.png" alt="YTDown Pro" class="brand-logo">
+                <div>
+                    <h2 class="brand-title">YTDown Pro</h2>
+                    <span class="brand-subtitle">Chrome Companion</span>
+                </div>
+            </div>
+            <div class="status-indicator" id="connection-status">
+                <span class="status-dot red" id="status-dot"></span>
+                <span class="status-label" id="status-label">Offline</span>
+            </div>
+        </header>
+
+        <!-- Main Body -->
+        <main class="popup-body">
+            <!-- Active Tab URL Card -->
+            <div class="card">
+                <label class="card-label">Current Page URL:</label>
+                <div class="url-box" id="current-url">Detecting page URL...</div>
+                <button class="btn-action btn-primary" id="btn-download-tab">
+                    ⚡ Send Page to YTDown Pro
+                </button>
+            </div>
+
+            <!-- Download Preferences -->
+            <div class="card">
+                <div class="row">
+                    <div class="col">
+                        <label class="card-label">Format:</label>
+                        <select id="select-format" class="select-control">
+                            <option value="mp4" selected>MP4 Video</option>
+                            <option value="mp3">MP3 Audio</option>
+                            <option value="m4a">M4A Audio</option>
+                        </select>
+                    </div>
+                    <div class="col">
+                        <label class="card-label">Quality:</label>
+                        <select id="select-quality" class="select-control">
+                            <option value="1080p" selected>1080p Full HD</option>
+                            <option value="720p">720p HD</option>
+                            <option value="best">Best Quality</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Magnetic Grabber Toggle -->
+            <div class="card flex-row">
+                <div>
+                    <div class="card-title">🧲 Magnetic Grabber</div>
+                    <div class="card-desc">Auto-detect copied video links</div>
+                </div>
+                <label class="switch">
+                    <input type="checkbox" id="toggle-magnetic" checked>
+                    <span class="slider"></span>
+                </label>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="popup-footer">
+            <button class="btn-link" id="btn-open-app">Open YTDown Pro App</button>
+        </footer>
+    </div>
+
+    <script src="popup.js"></script>
+</body>
+</html>

@@ -1,0 +1,2913 @@
+# YTDown Pro — Complete Deep-Detailed Desktop Application Development Prompt
+
+## 1. PROJECT TITLE
+
+**Application Name:** YTDown Pro
+
+**Application Type:** Professional Windows Desktop Media Downloader & Converter
+
+**Primary Platform:** Windows 10 / Windows 11 — 64-bit
+
+**Application Architecture:**
+
+- Electron.js
+- Node.js
+- HTML5
+- CSS3
+- JavaScript ES6+
+- Bootstrap 5
+- SQLite
+- Bundled yt-dlp
+- Bundled FFmpeg
+
+**Core Principle:**
+
+Build YTDown Pro as a completely standalone desktop application. The application must contain its own yt-dlp and FFmpeg binaries and must NOT require the user to separately install yt-dlp, FFmpeg, Python, Node.js, PHP, MySQL, or any third-party downloader API.
+
+The application may require normal internet connectivity to retrieve publicly accessible media information/content from supported platforms, but all application-side processing must be handled locally.
+
+Only support downloads that the user owns, has permission to download, or is otherwise legally entitled to access. Do not implement DRM bypassing, private-content extraction, authentication bypassing, CAPTCHA bypassing, geo-restriction bypassing, or other access-control circumvention.
+
+---
+
+# 2. PROJECT OBJECTIVE
+
+Create a professional desktop application inspired by the workflow and simplicity of modern online video downloader applications, but redesigned specifically for Windows desktop.
+
+The application should provide a beautiful, modern, responsive and animated interface where users can:
+
+1. Paste a supported public media URL.
+2. Analyze the URL.
+3. Retrieve media information.
+4. Display thumbnail, title, duration and metadata.
+5. Display available download options.
+6. Select video/audio format.
+7. Select quality.
+8. Select download location.
+9. Start the download.
+10. Monitor real-time progress.
+11. Pause/cancel where technically supported.
+12. Retry failed downloads.
+13. Convert supported media to audio formats using FFmpeg.
+14. View completed downloads.
+15. Open downloaded files.
+16. Open download folders.
+17. Manage download history.
+18. Configure application settings.
+19. Manage bundled engine status.
+20. Update/check the downloader engine safely.
+21. Use Dark, Light and System themes.
+22. Use responsive UI text and adaptive layouts.
+23. Use smooth animations throughout the application.
+
+---
+
+# 3. IMPORTANT DESIGN PHILOSOPHY
+
+The application must NOT look like a basic HTML wrapper.
+
+It must look like a polished commercial desktop application.
+
+Design goals:
+
+- Modern
+- Premium
+- Clean
+- Minimal
+- Professional
+- Fast
+- Responsive
+- Beautiful
+- Animated
+- User friendly
+- Keyboard friendly
+- Accessible
+- Consistent
+- Scalable
+
+Avoid:
+
+- Old-fashioned desktop UI
+- Excessive gradients
+- Excessive shadows
+- Huge buttons
+- Cluttered layouts
+- Tiny text
+- Fixed-width interfaces
+- Random animations
+- Unnecessary popups
+- Excessive modal windows
+
+---
+
+# 4. TECHNOLOGY STACK
+
+## Frontend
+
+Use:
+
+- HTML5
+- CSS3
+- Bootstrap 5
+- Vanilla JavaScript ES6+
+- Bootstrap Icons or Font Awesome
+- CSS animations
+- CSS transitions
+- JavaScript animation controls
+
+Do not require React unless there is a strong architectural reason.
+
+The UI should remain lightweight and fast.
+
+---
+
+# 5. DESKTOP FRAMEWORK
+
+Use:
+
+**Electron.js**
+
+Electron should provide:
+
+- Desktop window
+- Application lifecycle
+- Native menus
+- File dialogs
+- Download directory selection
+- Native notifications
+- IPC communication
+- Process management
+- Secure communication between renderer and main process
+- Application packaging
+- Windows installer
+
+Use Electron security best practices:
+
+- Context isolation enabled
+- Node integration disabled in renderer
+- Preload bridge
+- Strict IPC channels
+- No arbitrary renderer access to Node APIs
+- Validate all IPC arguments
+- Do not expose shell execution directly to frontend JavaScript
+
+---
+
+# 6. INTERNAL MEDIA ENGINE
+
+Bundle the following inside the application:
+
+```text
+/engines/
+    /yt-dlp/
+        yt-dlp.exe
+
+    /ffmpeg/
+        ffmpeg.exe
+        ffprobe.exe
+```
+
+The application must automatically locate these binaries.
+
+Example internal engine paths:
+
+```text
+resources/
+    engines/
+        yt-dlp/
+            yt-dlp.exe
+
+        ffmpeg/
+            ffmpeg.exe
+            ffprobe.exe
+```
+
+The user should NOT have to manually install these tools.
+
+---
+
+# 7. NO EXTERNAL DOWNLOADER API
+
+Do NOT use:
+
+- Third-party downloader APIs
+- Paid downloader APIs
+- External conversion APIs
+- Remote proxy downloader services
+- External scraping APIs
+
+The application should internally execute the bundled downloader engine through a controlled Node.js process layer.
+
+Architecture:
+
+```text
+UI
+ ↓
+Electron Renderer
+ ↓
+Preload API
+ ↓
+Electron Main Process
+ ↓
+Download Manager
+ ↓
+yt-dlp
+ ↓
+FFmpeg
+ ↓
+Local File System
+```
+
+---
+
+# 8. CORE APPLICATION ARCHITECTURE
+
+```text
+YTDown Pro
+│
+├── Electron Main Process
+│
+├── Renderer UI
+│
+├── Preload Security Bridge
+│
+├── Download Manager
+│
+├── Queue Manager
+│
+├── Media Information Service
+│
+├── Process Manager
+│
+├── FFmpeg Service
+│
+├── yt-dlp Service
+│
+├── SQLite Database
+│
+├── Settings Manager
+│
+├── History Manager
+│
+├── Notification Manager
+│
+├── File Manager
+│
+├── Theme Manager
+│
+└── Logging/Error Manager
+```
+
+---
+
+# 9. APPLICATION STARTUP
+
+When YTDown Pro launches:
+
+1. Display animated splash screen.
+2. Show YTDown Pro logo.
+3. Show subtle loading animation.
+4. Initialize Electron.
+5. Initialize SQLite.
+6. Load settings.
+7. Detect operating system.
+8. Locate yt-dlp.
+9. Locate FFmpeg.
+10. Validate engine executables.
+11. Initialize download manager.
+12. Restore unfinished jobs if appropriate.
+13. Load theme.
+14. Load language.
+15. Display Dashboard.
+
+Startup should be fast.
+
+Do not make the user wait unnecessarily.
+
+---
+
+# 10. SPLASH SCREEN
+
+Create a premium animated splash screen.
+
+Components:
+
+- YTDown Pro logo
+- Application name
+- Small subtitle:
+  "Fast • Simple • Powerful"
+- Animated loading indicator
+- Engine initialization status
+
+Example statuses:
+
+```text
+Initializing YTDown Pro...
+Checking media engine...
+Checking FFmpeg...
+Loading settings...
+Ready
+```
+
+Use smooth fade-in and fade-out.
+
+Splash screen should automatically disappear after initialization.
+
+---
+
+# 11. MAIN APPLICATION WINDOW
+
+Create a modern desktop shell.
+
+Structure:
+
+```text
+┌──────────────────────────────────────────────┐
+│ YTDown Pro                         — □ ×     │
+├──────────────┬───────────────────────────────┤
+│              │                               │
+│ Dashboard    │                               │
+│ Downloader   │          Main Content         │
+│ Downloads    │                               │
+│ History      │                               │
+│ Settings     │                               │
+│              │                               │
+│              │                               │
+├──────────────┴───────────────────────────────┤
+│ Ready • Engine Status • Version              │
+└──────────────────────────────────────────────┘
+```
+
+The sidebar should be collapsible.
+
+---
+
+# 12. RESPONSIVE DESKTOP UI
+
+The UI must adapt smoothly to different window sizes.
+
+Support:
+
+- 1280×720
+- 1366×768
+- 1440×900
+- 1600×900
+- 1920×1080
+- 2560×1440
+- Resizable application window
+
+When the window becomes smaller:
+
+- Sidebar collapses
+- Cards become stacked
+- Buttons shrink appropriately
+- Text wraps intelligently
+- No horizontal overflow
+- No overlapping components
+- No clipped labels
+- No broken icons
+
+---
+
+# 13. RESPONSIVE UI TEXT
+
+Every text element must be responsive.
+
+Examples:
+
+Instead of:
+
+```text
+Download Video in Maximum Available High Definition Quality
+```
+
+Use adaptive layout and allow wrapping:
+
+```text
+Download Video
+Maximum Quality
+```
+
+Buttons should adapt:
+
+Desktop:
+
+```text
+Download Video
+```
+
+Smaller width:
+
+```text
+Download
+```
+
+Very compact UI:
+
+```text
+↓
+```
+
+But tooltips must explain icon-only buttons.
+
+Never allow text to overflow.
+
+Use:
+
+- CSS line wrapping
+- text-overflow
+- ellipsis
+- flexible containers
+- min/max widths
+- responsive font sizes
+
+---
+
+# 14. THEME SYSTEM
+
+Implement:
+
+## Light Theme
+
+Clean white/light interface.
+
+## Dark Theme
+
+Professional dark desktop interface.
+
+## System Theme
+
+Automatically follow Windows system theme.
+
+Theme selector:
+
+```text
+Appearance
+
+○ Light
+○ Dark
+○ System
+```
+
+Save selected theme in SQLite/settings.
+
+Use CSS variables:
+
+```css
+--bg-primary
+--bg-secondary
+--surface
+--surface-hover
+--text-primary
+--text-secondary
+--border
+--accent
+--danger
+--success
+--warning
+```
+
+Do not hard-code colors throughout the application.
+
+---
+
+# 15. DASHBOARD
+
+Dashboard should be the primary page.
+
+Top section:
+
+```text
+Welcome to YTDown Pro
+
+Download and manage your media
+quickly and easily.
+```
+
+Main URL card:
+
+```text
+Paste your media URL
+
+[ Paste URL                              ]
+
+[ Analyze ]
+```
+
+Buttons:
+
+- Paste
+- Clear
+- Analyze
+
+---
+
+# 16. SMART URL INPUT
+
+The URL input must support:
+
+- Paste from clipboard
+- Manual typing
+- Keyboard shortcut Ctrl+V
+- Clear
+- URL validation
+- Auto-detection
+- Analyze on Enter
+
+When a valid URL is detected:
+
+```text
+✓ URL detected
+```
+
+When invalid:
+
+```text
+Invalid URL
+Please enter a supported public media URL.
+```
+
+Do not execute shell commands from raw user input.
+
+All URLs must be validated and safely passed to the process layer.
+
+---
+
+# 17. ANALYZE WORKFLOW
+
+When user clicks Analyze:
+
+```text
+Idle
+ ↓
+Analyzing
+ ↓
+Fetching metadata
+ ↓
+Processing formats
+ ↓
+Ready
+```
+
+Show animated loading state.
+
+Example:
+
+```text
+Analyzing media...
+Please wait
+```
+
+Disable duplicate Analyze requests while processing.
+
+---
+
+# 18. MEDIA INFORMATION CARD
+
+After successful analysis, show:
+
+```text
+┌───────────────────────────────────────┐
+│ Thumbnail                             │
+│                                       │
+│ Video Title                           │
+│ Channel                               │
+│ Duration                              │
+│                                       │
+│ Available Formats                     │
+└───────────────────────────────────────┘
+```
+
+Display:
+
+- Thumbnail
+- Title
+- Channel/uploader when available
+- Duration
+- Media type
+- Source domain
+- Available formats
+
+Long titles should be truncated with ellipsis and full title available through tooltip/details.
+
+---
+
+# 19. FORMAT SELECTION
+
+Create modern format cards.
+
+Example:
+
+```text
+Video
+
+MP4
+1080p
+720p
+480p
+360p
+```
+
+Audio:
+
+```text
+Audio
+
+MP3
+M4A
+```
+
+Each option should show:
+
+- Format
+- Quality
+- Estimated size when available
+- Audio/video availability
+
+Selected option gets an animated active state.
+
+---
+
+# 20. QUALITY SELECTOR
+
+Use a modern dropdown or card selector.
+
+Example:
+
+```text
+Quality
+
+[ 1080p ▼ ]
+```
+
+Options dynamically populated from available formats.
+
+Do not display qualities that are not actually available.
+
+---
+
+# 21. AUDIO CONVERSION
+
+When user selects audio:
+
+```text
+Audio Format
+
+MP3
+M4A
+```
+
+For MP3:
+
+```text
+Audio Quality
+
+128 kbps
+192 kbps
+256 kbps
+320 kbps
+```
+
+Use FFmpeg for conversion where required.
+
+Do not claim a bitrate/format is available unless the actual processing path supports it.
+
+---
+
+# 22. DOWNLOAD LOCATION
+
+Add:
+
+```text
+Save to
+
+C:\Users\User\Downloads
+
+[ Change ]
+```
+
+Change button opens native Windows directory picker.
+
+Remember selected folder.
+
+Allow:
+
+```text
+Use default Downloads folder
+```
+
+---
+
+# 23. DOWNLOAD BUTTON
+
+Large premium primary button:
+
+```text
+↓ Download
+```
+
+When processing:
+
+```text
+Downloading...
+```
+
+When completed:
+
+```text
+✓ Completed
+```
+
+Button states must animate smoothly.
+
+---
+
+# 24. DOWNLOAD MANAGER
+
+Create a complete Download Manager.
+
+Tabs:
+
+```text
+All
+Downloading
+Queued
+Completed
+Failed
+```
+
+Each download card:
+
+```text
+┌─────────────────────────────────────────────┐
+│ Thumbnail   Video Title                     │
+│             MP4 • 1080p                     │
+│                                             │
+│ ███████████████░░░░░ 72%                    │
+│                                             │
+│ 4.2 MB/s     00:32 remaining                │
+│                                             │
+│ Pause   Cancel   Open Folder                │
+└─────────────────────────────────────────────┘
+```
+
+---
+
+# 25. DOWNLOAD PROGRESS
+
+Show:
+
+- Percentage
+- Progress bar
+- Download speed
+- Downloaded size
+- Total size if available
+- Estimated remaining time
+- Current state
+
+States:
+
+```text
+Queued
+Preparing
+Downloading
+Processing
+Converting
+Completed
+Cancelled
+Failed
+```
+
+---
+
+# 26. DOWNLOAD QUEUE
+
+Implement queue management.
+
+Users can:
+
+- Add multiple URLs
+- Queue downloads
+- Reorder queue
+- Start/pause queue
+- Cancel item
+- Retry item
+- Remove item
+
+Setting:
+
+```text
+Maximum simultaneous downloads:
+[ 3 ]
+```
+
+Allow configurable concurrency within reasonable resource limits.
+
+---
+
+# 27. PAUSE / RESUME
+
+Implement pause/resume only where technically supported by the underlying download process.
+
+If true resume is unavailable:
+
+Display:
+
+```text
+Resume is not supported for this download.
+```
+
+Do not fake a pause feature.
+
+---
+
+# 28. DOWNLOAD HISTORY
+
+Store completed and failed downloads.
+
+Columns/cards:
+
+- Title
+- Format
+- Quality
+- Date
+- Status
+- File location
+
+Actions:
+
+- Open file
+- Open folder
+- Download again
+- Remove history
+- Clear history
+
+---
+
+# 29. COMPLETED DOWNLOAD UI
+
+After completion show:
+
+```text
+✓ Download Completed
+
+Video Name.mp4
+
+[ Open File ]
+[ Open Folder ]
+```
+
+Use Windows native shell integration safely.
+
+---
+
+# 30. ERROR SYSTEM
+
+Create professional error messages.
+
+Never show raw stack traces to normal users.
+
+Examples:
+
+### Invalid URL
+
+```text
+Invalid URL
+
+Please enter a valid supported public media URL.
+```
+
+### Network Error
+
+```text
+Connection Error
+
+Please check your internet connection and try again.
+```
+
+### Unsupported Content
+
+```text
+Unsupported Media
+
+This media type is not currently supported.
+```
+
+### Engine Error
+
+```text
+Media Engine Error
+
+YTDown Pro could not process this request.
+```
+
+### FFmpeg Error
+
+```text
+Conversion Error
+
+The selected media could not be converted.
+```
+
+Provide:
+
+```text
+[ Retry ]
+[ View Details ]
+```
+
+Only show technical logs inside a developer/details section.
+
+---
+
+# 31. NOTIFICATION SYSTEM
+
+Use desktop notifications for:
+
+- Download started
+- Download completed
+- Download failed
+- Queue completed
+- Engine update available
+- Application update available
+
+Example:
+
+```text
+YTDown Pro
+
+Download completed successfully.
+```
+
+---
+
+# 32. SETTINGS PAGE
+
+Create advanced settings.
+
+Sections:
+
+## General
+
+- Start with Windows
+- Minimize to tray
+- Show notifications
+- Confirm before deleting
+
+## Downloads
+
+- Default download folder
+- Filename template
+- Concurrent downloads
+- Auto-start queue
+- Keep history
+
+## Appearance
+
+- Light
+- Dark
+- System
+- Animation toggle
+- Compact mode
+
+## Engine
+
+- yt-dlp status
+- FFmpeg status
+- Version information
+- Check for engine update
+- Reset engine settings
+
+## Language
+
+Provide localization architecture.
+
+Example:
+
+```text
+English
+Arabic
+Urdu
+Hindi
+Spanish
+French
+German
+Portuguese
+Indonesian
+Turkish
+```
+
+The application should be designed so additional languages can be added without changing the core UI.
+
+---
+
+# 33. ENGINE STATUS
+
+Create an Engine Diagnostics section.
+
+Display:
+
+```text
+YTDown Pro Engine
+
+yt-dlp
+Status: Ready
+Version: x.x.x
+
+FFmpeg
+Status: Ready
+Version: x.x.x
+
+FFprobe
+Status: Ready
+Version: x.x.x
+```
+
+Use:
+
+- Green check = ready
+- Warning = needs attention
+- Red = unavailable
+
+Add:
+
+```text
+[ Test Engine ]
+```
+
+---
+
+# 34. ENGINE MANAGEMENT
+
+Provide safe engine management.
+
+Features:
+
+- Detect bundled yt-dlp
+- Detect bundled FFmpeg
+- Show versions
+- Verify executable existence
+- Verify executable execution
+- Check for updates
+- Download official releases only when user requests/updates are enabled
+- Validate downloaded files before replacement
+- Keep backup of previous working version
+- Roll back if update fails
+
+Do not silently replace executable files from untrusted sources.
+
+---
+
+# 35. DATABASE
+
+Use SQLite.
+
+Database:
+
+```text
+ytdownpro.db
+```
+
+Tables:
+
+```text
+settings
+downloads
+download_queue
+download_history
+application_logs
+engine_versions
+```
+
+---
+
+# 36. DOWNLOAD TABLE
+
+Example fields:
+
+```text
+id
+job_uuid
+source_url
+media_id
+title
+thumbnail
+format
+quality
+audio_quality
+file_name
+file_path
+file_size
+status
+progress
+speed
+eta
+error_message
+created_at
+started_at
+completed_at
+```
+
+---
+
+# 37. SETTINGS TABLE
+
+```text
+id
+key
+value
+updated_at
+```
+
+Examples:
+
+```text
+theme = dark
+language = en
+download_folder = ...
+max_concurrent = 3
+notifications = true
+animations = true
+startup = false
+```
+
+---
+
+# 38. SECURITY ARCHITECTURE
+
+Security must be treated as a core feature.
+
+Implement:
+
+- Context isolation
+- Secure preload
+- IPC validation
+- URL validation
+- Process argument validation
+- No arbitrary shell execution
+- Safe temporary file names
+- Safe output paths
+- File extension validation
+- Maximum file size policy
+- Process timeout
+- Process cancellation
+- Error handling
+- Log sanitization
+
+Never build commands like:
+
+```text
+yt-dlp "USER_INPUT"
+```
+
+through unsafe string concatenation.
+
+Use properly escaped argument arrays/process spawning.
+
+---
+
+# 39. TEMPORARY STORAGE
+
+Use an application-managed temporary directory.
+
+Example:
+
+```text
+%LOCALAPPDATA%/
+    YTDown Pro/
+        temp/
+        logs/
+        database/
+        cache/
+```
+
+Clean temporary files automatically.
+
+If a job fails:
+
+- Remove incomplete temporary files when safe.
+- Keep useful logs.
+- Do not leave large orphaned files.
+
+---
+
+# 40. FILE NAMING SYSTEM
+
+Create configurable filename templates.
+
+Example:
+
+```text
+%(title)s.%(ext)s
+```
+
+Allow safe options such as:
+
+```text
+Title
+Uploader
+Date
+Format
+Quality
+```
+
+Sanitize Windows-invalid filename characters:
+
+```text
+\
+/
+:
+*
+?
+"
+<
+>
+|
+```
+
+Prevent path traversal.
+
+---
+
+# 41. SMART FILE MANAGEMENT
+
+After download:
+
+- Verify file exists
+- Verify file size
+- Verify expected extension
+- Detect incomplete files
+- Move/rename safely
+- Update database
+- Trigger completion notification
+
+---
+
+# 42. ANIMATED UI SYSTEM
+
+Animation should be subtle and professional.
+
+Use:
+
+### Page transitions
+
+- Fade
+- Slide
+- Scale
+
+### Cards
+
+- Hover elevation
+- Smooth border transition
+- Soft transform
+
+### Buttons
+
+- Hover
+- Press
+- Loading state
+
+### Progress
+
+- Smooth progress movement
+- Animated status icon
+
+### Sidebar
+
+- Smooth collapse/expand
+
+### Modals
+
+- Fade + scale
+
+### Toasts
+
+- Slide-in
+- Auto-dismiss
+
+Provide:
+
+```text
+Animations: ON/OFF
+```
+
+Respect Windows accessibility/reduced-motion preferences where possible.
+
+---
+
+# 43. MICRO INTERACTIONS
+
+Add polished micro-interactions:
+
+- Clipboard success animation
+- URL validation icon
+- Download success checkmark
+- Animated spinner
+- Button loading indicator
+- Hover tooltips
+- Smooth dropdowns
+- Toast notifications
+- Empty-state animations
+
+Avoid excessive animation that slows the application.
+
+---
+
+# 44. EMPTY STATES
+
+Every page should have a professional empty state.
+
+Downloads:
+
+```text
+No active downloads
+
+Your active downloads will appear here.
+```
+
+History:
+
+```text
+No download history
+
+Completed downloads will appear here.
+```
+
+Search/filter:
+
+```text
+No results found
+```
+
+---
+
+# 45. SEARCH AND FILTER
+
+Download history should support:
+
+- Search by title
+- Filter by format
+- Filter by status
+- Filter by date
+- Sort newest/oldest
+- Sort file size
+
+Search should update smoothly without freezing the UI.
+
+---
+
+# 46. KEYBOARD SHORTCUTS
+
+Implement:
+
+```text
+Ctrl + V
+Paste URL
+
+Ctrl + L
+Focus URL input
+
+Enter
+Analyze URL
+
+Ctrl + Enter
+Start download
+
+Esc
+Close modal
+
+Ctrl + ,
+Open Settings
+```
+
+Show shortcuts in tooltips/help.
+
+---
+
+# 47. SYSTEM TRAY
+
+Optional tray integration.
+
+Tray menu:
+
+```text
+YTDown Pro
+
+Open
+Pause All
+Resume All
+Downloads
+Settings
+Exit
+```
+
+When minimized to tray:
+
+```text
+YTDown Pro is running in the background.
+```
+
+---
+
+# 48. WINDOW MANAGEMENT
+
+Support:
+
+- Minimize
+- Maximize
+- Restore
+- Close
+- Resize
+- Remember window size
+- Remember window position where appropriate
+
+Prevent invalid/off-screen saved window positions.
+
+---
+
+# 49. APPLICATION MENU
+
+Create native menu:
+
+```text
+File
+    Add URL
+    Open Downloads
+    Exit
+
+Downloads
+    Start All
+    Pause All
+    Clear Completed
+
+View
+    Dashboard
+    Downloads
+    History
+    Settings
+
+Tools
+    Engine Diagnostics
+    Check for Updates
+    Logs
+
+Help
+    About YTDown Pro
+    Keyboard Shortcuts
+```
+
+---
+
+# 50. ABOUT PAGE
+
+Display:
+
+```text
+YTDown Pro
+
+Professional Desktop Media Downloader
+
+Version 1.0.0
+
+Powered by:
+yt-dlp
+FFmpeg
+Electron
+
+Copyright © YTDown Pro
+```
+
+Include licenses/attributions for bundled open-source components according to their respective licenses.
+
+---
+
+# 51. LOGGING SYSTEM
+
+Create structured application logs.
+
+Log:
+
+- Startup
+- Engine detection
+- Job creation
+- Job start
+- Job completion
+- Job failure
+- FFmpeg process
+- yt-dlp process
+- IPC errors
+- Database errors
+
+Logs should not expose unnecessary personal data.
+
+Store logs:
+
+```text
+%LOCALAPPDATA%/YTDown Pro/logs/
+```
+
+Implement log rotation.
+
+---
+
+# 52. PROCESS MANAGEMENT
+
+The Node/Electron main process should manage child processes.
+
+Required capabilities:
+
+```text
+spawn()
+monitor()
+capture stdout
+capture stderr
+parse progress
+cancel()
+cleanup()
+```
+
+Never allow renderer JavaScript to directly spawn arbitrary processes.
+
+Only predefined engine operations should be exposed through the preload API.
+
+---
+
+# 53. PROGRESS PARSER
+
+Build a dedicated progress parser capable of interpreting downloader output.
+
+Extract when available:
+
+- Percentage
+- Downloaded bytes
+- Total bytes
+- Speed
+- ETA
+- Status
+
+Convert to a normalized application state:
+
+```javascript
+{
+    progress: 72,
+    speed: "4.2 MB/s",
+    eta: "00:32",
+    downloaded: "...",
+    total: "...",
+    status: "downloading"
+}
+```
+
+The UI should consume normalized progress data instead of parsing raw process output.
+
+---
+
+# 54. JOB STATE MACHINE
+
+Use controlled states:
+
+```text
+CREATED
+QUEUED
+PREPARING
+ANALYZING
+DOWNLOADING
+PROCESSING
+CONVERTING
+COMPLETED
+CANCELLED
+FAILED
+```
+
+Do not allow invalid state transitions.
+
+---
+
+# 55. MULTIPLE DOWNLOADS
+
+Allow users to add multiple URLs.
+
+Example:
+
+```text
+URL 1 → Queue
+URL 2 → Queue
+URL 3 → Queue
+URL 4 → Queue
+```
+
+Queue manager decides when jobs execute.
+
+Maximum simultaneous downloads should be configurable.
+
+---
+
+# 56. CRASH RECOVERY
+
+If application closes unexpectedly:
+
+On next launch:
+
+```text
+Previous downloads were interrupted.
+
+[ Resume Available ]
+[ Clear Interrupted Jobs ]
+```
+
+Only resume where the underlying download process actually supports continuation.
+
+---
+
+# 57. PERFORMANCE REQUIREMENTS
+
+Application should:
+
+- Launch quickly
+- Use minimal idle CPU
+- Avoid memory leaks
+- Avoid blocking renderer
+- Use async IPC
+- Use background processes for heavy operations
+- Keep SQLite operations efficient
+- Avoid excessive DOM rendering
+
+Never run FFmpeg or yt-dlp directly inside the renderer process.
+
+---
+
+# 58. RESPONSIVE COMPONENT SYSTEM
+
+Create reusable components:
+
+```text
+AppShell
+Sidebar
+TopBar
+UrlInput
+AnalyzeButton
+MediaCard
+Thumbnail
+FormatSelector
+QualitySelector
+DownloadLocation
+DownloadCard
+ProgressBar
+QueueList
+HistoryList
+SettingsSection
+Toast
+Modal
+Tooltip
+EmptyState
+ErrorState
+LoadingState
+```
+
+---
+
+# 59. UI DESIGN SYSTEM
+
+Create a consistent design system.
+
+Typography:
+
+- Modern sans-serif
+- Clear hierarchy
+- Responsive sizes
+
+Recommended hierarchy:
+
+```text
+App Title
+Page Heading
+Section Heading
+Card Title
+Body
+Secondary Text
+Caption
+```
+
+Buttons:
+
+```text
+Primary
+Secondary
+Ghost
+Danger
+Success
+Icon
+```
+
+Cards:
+
+- Consistent radius
+- Consistent padding
+- Consistent border
+- Consistent hover behavior
+
+---
+
+# 60. MAIN COLOR SYSTEM
+
+Do not scatter colors throughout the CSS.
+
+Use centralized CSS variables.
+
+Example conceptual structure:
+
+```css
+:root {
+    --background;
+    --surface;
+    --surface-elevated;
+    --text;
+    --text-muted;
+    --border;
+    --accent;
+    --success;
+    --warning;
+    --danger;
+}
+```
+
+Dark/light themes should override these variables.
+
+---
+
+# 61. ICON SYSTEM
+
+Use consistent icons.
+
+Examples:
+
+- Download
+- Paste
+- Clear
+- Search
+- Settings
+- History
+- Folder
+- File
+- Play
+- Pause
+- Stop
+- Refresh
+- Check
+- Warning
+- Error
+- Info
+
+Do not mix multiple unrelated icon styles.
+
+---
+
+# 62. TOOLTIP SYSTEM
+
+Every icon-only button must have a tooltip.
+
+Examples:
+
+```text
+Open File
+Open Folder
+Retry
+Cancel
+Remove
+Settings
+```
+
+Tooltips should be keyboard accessible where possible.
+
+---
+
+# 63. ACCESSIBILITY
+
+Implement:
+
+- Keyboard navigation
+- Visible focus states
+- Adequate contrast
+- Accessible labels
+- Tooltips
+- Screen-reader-friendly buttons
+- Reduced motion option
+- Clear error messages
+
+---
+
+# 64. INTERNATIONALIZATION
+
+Create language files:
+
+```text
+/locales/
+    en.json
+    ur.json
+    ar.json
+    hi.json
+    es.json
+    fr.json
+    de.json
+```
+
+Never hard-code UI strings throughout JavaScript.
+
+Example:
+
+```json
+{
+    "download": "Download",
+    "cancel": "Cancel",
+    "completed": "Completed",
+    "analyzing": "Analyzing..."
+}
+```
+
+Support RTL layout for Arabic and Urdu.
+
+---
+
+# 65. FILE/FOLDER STRUCTURE
+
+Use a professional architecture:
+
+```text
+YTDown-Pro/
+│
+├── package.json
+├── package-lock.json
+├── README.md
+├── LICENSE
+│
+├── build/
+│   ├── icon.ico
+│   └── installer/
+│
+├── src/
+│   │
+│   ├── main/
+│   │   ├── main.js
+│   │   ├── window-manager.js
+│   │   ├── ipc/
+│   │   ├── services/
+│   │   ├── managers/
+│   │   └── utils/
+│   │
+│   ├── preload/
+│   │   └── preload.js
+│   │
+│   ├── renderer/
+│   │   ├── index.html
+│   │   │
+│   │   ├── pages/
+│   │   │   ├── dashboard.html
+│   │   │   ├── downloads.html
+│   │   │   ├── history.html
+│   │   │   ├── settings.html
+│   │   │   └── about.html
+│   │   │
+│   │   ├── css/
+│   │   │   ├── bootstrap.css
+│   │   │   ├── variables.css
+│   │   │   ├── themes.css
+│   │   │   ├── components.css
+│   │   │   ├── animations.css
+│   │   │   └── responsive.css
+│   │   │
+│   │   ├── js/
+│   │   │   ├── app.js
+│   │   │   ├── dashboard.js
+│   │   │   ├── downloads.js
+│   │   │   ├── history.js
+│   │   │   ├── settings.js
+│   │   │   ├── ui.js
+│   │   │   └── utils.js
+│   │   │
+│   │   └── assets/
+│   │       ├── icons/
+│   │       ├── images/
+│   │       └── fonts/
+│   │
+│   ├── database/
+│   │   ├── database.js
+│   │   ├── migrations/
+│   │   └── repositories/
+│   │
+│   └── engines/
+│       ├── yt-dlp/
+│       │   └── yt-dlp.exe
+│       └── ffmpeg/
+│           ├── ffmpeg.exe
+│           └── ffprobe.exe
+│
+└── scripts/
+    ├── build.js
+    ├── verify-engines.js
+    └── package-release.js
+```
+
+---
+
+# 66. DATABASE ABSTRACTION
+
+Do not put raw SQL queries throughout UI code.
+
+Use repository/service architecture:
+
+```text
+UI
+ ↓
+Service
+ ↓
+Repository
+ ↓
+SQLite
+```
+
+Example:
+
+```text
+DownloadRepository
+HistoryRepository
+SettingsRepository
+LogRepository
+EngineRepository
+```
+
+---
+
+# 67. APPLICATION SERVICES
+
+Create services:
+
+```text
+MediaInfoService
+DownloadService
+QueueService
+FFmpegService
+YtDlpService
+FileService
+SettingsService
+HistoryService
+NotificationService
+UpdateService
+LoggingService
+```
+
+Each service should have one clear responsibility.
+
+---
+
+# 68. IPC API DESIGN
+
+Expose only controlled APIs through preload.
+
+Example:
+
+```text
+window.ytdown.analyzeUrl()
+window.ytdown.startDownload()
+window.ytdown.cancelDownload()
+window.ytdown.pauseDownload()
+window.ytdown.getDownloads()
+window.ytdown.getHistory()
+window.ytdown.openFile()
+window.ytdown.openFolder()
+window.ytdown.selectFolder()
+window.ytdown.getSettings()
+window.ytdown.updateSettings()
+window.ytdown.getEngineStatus()
+```
+
+Do not expose:
+
+```text
+child_process
+fs
+shell
+process
+```
+
+directly to renderer code.
+
+---
+
+# 69. API-LIKE INTERNAL CONTRACTS
+
+Analyze:
+
+```text
+{
+    url
+}
+```
+
+Return:
+
+```text
+{
+    success,
+    media,
+    formats,
+    error
+}
+```
+
+Download:
+
+```text
+{
+    url,
+    format,
+    quality,
+    outputDirectory
+}
+```
+
+Return:
+
+```text
+{
+    jobId,
+    status
+}
+```
+
+Progress:
+
+```text
+{
+    jobId,
+    progress,
+    speed,
+    eta,
+    status
+}
+```
+
+---
+
+# 70. AUTO UPDATE ARCHITECTURE
+
+Design optional application update support.
+
+Features:
+
+- Check current version
+- Check update availability
+- Display release notes
+- Download update
+- Verify update
+- Install safely
+- Restart application
+
+Do not make update functionality mandatory for the downloader itself.
+
+---
+
+# 71. FIRST-RUN EXPERIENCE
+
+On first launch:
+
+```text
+Welcome to YTDown Pro
+
+Choose your preferences.
+
+Appearance
+[ System ▼ ]
+
+Download Folder
+[ Downloads ]
+
+Language
+[ English ▼ ]
+
+[ Continue ]
+```
+
+Then show short onboarding:
+
+```text
+1. Paste URL
+2. Analyze
+3. Choose format
+4. Download
+```
+
+Allow:
+
+```text
+Skip Tutorial
+```
+
+---
+
+# 72. DOWNLOAD DEFAULTS
+
+Settings should allow:
+
+```text
+Default Format:
+MP4
+
+Default Quality:
+Best Available
+
+Default Audio:
+MP3
+
+Download Folder:
+Windows Downloads
+```
+
+Do not select unavailable formats automatically.
+
+---
+
+# 73. SEARCH ENGINE / SUPPORTED PLATFORM ARCHITECTURE
+
+The application should not hard-code UI assumptions that only one source is supported.
+
+Create a provider abstraction:
+
+```text
+MediaProvider
+    ↓
+Provider Adapter
+    ↓
+Media Engine
+```
+
+The UI should be able to display:
+
+```text
+Supported Source
+Unsupported Source
+```
+
+The backend/provider layer decides actual support.
+
+Do not claim support for a platform unless the bundled engine and current application implementation actually support it.
+
+---
+
+# 74. LEGAL/COMPLIANCE UI
+
+Add a short notice where appropriate:
+
+```text
+Please download only content you own, have permission to use,
+or are otherwise legally entitled to access. You are responsible
+for complying with applicable laws and platform terms.
+```
+
+Add:
+
+```text
+Privacy
+Terms
+Copyright / Legal
+About
+```
+
+The application should not advertise itself as a method to bypass copyright protection, DRM, private content restrictions, or platform security controls.
+
+---
+
+# 75. PRIVACY
+
+Because the application is desktop/local-first:
+
+Prefer storing:
+
+- Settings locally
+- Download history locally
+- Logs locally
+- Database locally
+
+Do not transmit user URLs to third-party downloader APIs.
+
+Clearly explain any optional telemetry/update mechanism.
+
+---
+
+# 76. TESTING
+
+Create tests for:
+
+## UI
+
+- Responsive layout
+- Dark theme
+- Light theme
+- Sidebar
+- Modals
+- Notifications
+- Error states
+
+## Downloader
+
+- Valid URL
+- Invalid URL
+- Unsupported URL
+- Metadata failure
+- Download success
+- Download cancellation
+- Failed download
+- Large file
+- Missing file
+- Output directory unavailable
+
+## FFmpeg
+
+- Conversion success
+- Conversion failure
+- Unsupported codec
+- Invalid input
+
+## Database
+
+- Create job
+- Update job
+- Complete job
+- Delete history
+- Settings persistence
+
+## Security
+
+- Malformed URL
+- Malicious filename
+- Path traversal
+- Invalid IPC arguments
+- Unexpected process output
+
+---
+
+# 77. PERFORMANCE TESTING
+
+Test:
+
+```text
+1 download
+3 downloads
+5 downloads
+10 queued downloads
+```
+
+Monitor:
+
+- CPU
+- RAM
+- Disk
+- UI responsiveness
+- Process count
+
+The UI must remain responsive while downloads/conversions are running.
+
+---
+
+# 78. WINDOWS INSTALLER
+
+Create professional installer.
+
+Installer name:
+
+```text
+YTDown Pro Setup.exe
+```
+
+Installation:
+
+```text
+Welcome
+↓
+License
+↓
+Install Location
+↓
+Desktop Shortcut
+↓
+Start Menu Shortcut
+↓
+Install
+↓
+Finish
+```
+
+Application icon:
+
+```text
+YTDown Pro
+```
+
+Use proper Windows executable metadata.
+
+---
+
+# 79. PORTABLE VERSION
+
+Optionally create:
+
+```text
+YTDown Pro Portable.exe
+```
+
+Portable version should keep application data in a controlled portable data directory.
+
+---
+
+# 80. BUILD COMMANDS
+
+Development:
+
+```bash
+npm install
+npm run dev
+```
+
+Production:
+
+```bash
+npm run build
+npm run package
+```
+
+Create:
+
+```text
+dist/
+    YTDown-Pro-Setup.exe
+    YTDown-Pro-Portable.exe
+```
+
+---
+
+# 81. RELEASE VALIDATION
+
+Before creating a release:
+
+1. Verify Electron version.
+2. Verify yt-dlp exists.
+3. Verify FFmpeg exists.
+4. Verify FFprobe exists.
+5. Verify SQLite initialization.
+6. Test clean Windows installation.
+7. Test first launch.
+8. Test download workflow.
+9. Test conversion workflow.
+10. Test history.
+11. Test settings.
+12. Test uninstall.
+13. Test portable version if enabled.
+
+---
+
+# 82. CODE QUALITY
+
+Code must be:
+
+- Modular
+- Maintainable
+- Commented where necessary
+- Asynchronous where appropriate
+- Error handled
+- Secure
+- Reusable
+- Consistent
+
+Avoid:
+
+- Huge single JavaScript file
+- Global variables everywhere
+- Inline event-handler spaghetti
+- Duplicate code
+- Unsafe shell commands
+- Blocking operations in renderer
+- Hard-coded paths
+- Hard-coded UI strings
+
+---
+
+# 83. UI QUALITY REQUIREMENT
+
+The final UI must feel like a professional 2026 desktop application.
+
+It should visually communicate:
+
+```text
+Fast
+Modern
+Reliable
+Simple
+Powerful
+Professional
+```
+
+Use:
+
+- Smooth cards
+- Premium typography
+- Clean spacing
+- Modern icons
+- Subtle shadows
+- Responsive layout
+- Smooth animations
+- Beautiful empty states
+- Excellent loading states
+- Excellent error states
+
+---
+
+# 84. MAIN DASHBOARD VISUAL CONCEPT
+
+Create the primary dashboard around a central download experience:
+
+```text
+              YTDown Pro
+
+       Download your media simply
+
+┌─────────────────────────────────────────┐
+│ Paste a supported media URL             │
+│                                         │
+│ https://................................│
+│                                         │
+│ [ Paste ]       [ Clear ]   [ Analyze ] │
+└─────────────────────────────────────────┘
+
+              Recent Downloads
+
+┌─────────────────────────────────────────┐
+│ Thumbnail  Title                  ✓     │
+│            MP4 • 1080p                  │
+└─────────────────────────────────────────┘
+```
+
+Keep the interface uncluttered.
+
+---
+
+# 85. DOWNLOAD RESULT VISUAL CONCEPT
+
+```text
+┌────────────────────────────────────────────┐
+│                                            │
+│  [Thumbnail]   Video Title                 │
+│                Channel                     │
+│                12:45                       │
+│                                            │
+│  Format                                     │
+│  [ MP4 ] [ MP3 ] [ M4A ]                  │
+│                                            │
+│  Quality                                    │
+│  [ 1080p ▼ ]                               │
+│                                            │
+│  Save Location                              │
+│  C:\Users\User\Downloads    [ Change ]     │
+│                                            │
+│             [ ↓ Download ]                 │
+└────────────────────────────────────────────┘
+```
+
+---
+
+# 86. DOWNLOAD CARD ANIMATION
+
+When download begins:
+
+```text
+Preparing
+   ↓
+Downloading
+   ↓
+Processing
+   ↓
+Completed ✓
+```
+
+Use animated state transitions.
+
+When completed, show a smooth checkmark animation.
+
+---
+
+# 87. MODERN TOAST SYSTEM
+
+Examples:
+
+```text
+✓ URL copied
+✓ Download added to queue
+✓ Download completed
+⚠ Download already exists
+✕ Download failed
+```
+
+Toasts should:
+
+- Appear smoothly
+- Stay readable
+- Have close button
+- Auto-dismiss
+- Support multiple notifications without overlap
+
+---
+
+# 88. ADVANCED SEARCH/URL EXPERIENCE
+
+If clipboard contains a supported URL, optionally display:
+
+```text
+URL detected from clipboard
+
+[ Analyze ]
+```
+
+Do not automatically download anything.
+
+Always require user action before starting downloads.
+
+---
+
+# 89. DUPLICATE DOWNLOAD DETECTION
+
+Before starting a new job:
+
+Check whether the same media has already been downloaded.
+
+Display:
+
+```text
+This media may already exist.
+
+[ Download Again ]
+[ Open Existing File ]
+[ Cancel ]
+```
+
+---
+
+# 90. FILE EXISTENCE HANDLING
+
+If target file exists:
+
+Options:
+
+```text
+Replace
+Rename
+Skip
+Cancel
+```
+
+Default:
+
+```text
+Rename
+```
+
+Example:
+
+```text
+Video.mp4
+Video (1).mp4
+Video (2).mp4
+```
+
+---
+
+# 91. OFFLINE MODE
+
+When internet is unavailable:
+
+Display:
+
+```text
+You're offline
+
+YTDown Pro requires an internet connection
+to analyze and download online media.
+```
+
+But allow:
+
+- History
+- Settings
+- Existing downloaded files
+- Application information
+
+---
+
+# 92. ENGINE FAILURE MODE
+
+If yt-dlp is missing:
+
+```text
+Media Engine Unavailable
+
+YTDown Pro could not locate its bundled media engine.
+
+[ Repair ]
+[ View Details ]
+```
+
+If FFmpeg is missing:
+
+```text
+FFmpeg Unavailable
+
+Video downloads may still work where conversion is unnecessary,
+but conversion features are unavailable until FFmpeg is restored.
+```
+
+---
+
+# 93. DEVELOPMENT PRIORITY
+
+Develop in this order:
+
+### Phase 1
+
+Electron foundation
+
+### Phase 2
+
+Modern UI shell
+
+### Phase 3
+
+URL input/analyzer
+
+### Phase 4
+
+yt-dlp integration
+
+### Phase 5
+
+Format/quality selection
+
+### Phase 6
+
+FFmpeg integration
+
+### Phase 7
+
+Download Manager
+
+### Phase 8
+
+SQLite
+
+### Phase 9
+
+History
+
+### Phase 10
+
+Settings
+
+### Phase 11
+
+Animations
+
+### Phase 12
+
+Notifications
+
+### Phase 13
+
+Security hardening
+
+### Phase 14
+
+Testing
+
+### Phase 15
+
+Windows installer
+
+### Phase 16
+
+Production optimization
+
+---
+
+# 94. FINAL ACCEPTANCE CRITERIA
+
+The project is complete only when:
+
+- YTDown Pro launches as a Windows desktop application.
+- UI is modern and beautiful.
+- UI is fully responsive to window resizing.
+- Text is responsive and never overlaps.
+- Dark/Light/System themes work.
+- Animations are smooth.
+- URL input works.
+- Metadata analysis works for supported public media.
+- Available formats are dynamically displayed.
+- Quality selection works.
+- Download manager works.
+- Queue works.
+- Progress works.
+- Completed downloads are saved locally.
+- FFmpeg conversion works where applicable.
+- Download history works.
+- SQLite persistence works.
+- Settings work.
+- Native folder selection works.
+- Notifications work.
+- Errors are handled professionally.
+- yt-dlp is bundled.
+- FFmpeg is bundled.
+- User does not need separate yt-dlp installation.
+- User does not need separate FFmpeg installation.
+- User does not need Python installation.
+- User does not need MySQL.
+- User does not need a third-party downloader API.
+- Renderer cannot execute arbitrary system commands.
+- Application does not bypass DRM or access controls.
+- Temporary files are cleaned.
+- Application can recover gracefully after interruption.
+- Windows installer works.
+- Application works on clean Windows 10/11 systems.
+
+---
+
+# 95. FINAL DEVELOPMENT INSTRUCTION
+
+Build **YTDown Pro** as a complete, production-quality, standalone Windows desktop application—not as a simple webpage packaged inside Electron.
+
+The application must have a polished commercial-grade UI, responsive layout, responsive text, smooth animations, robust download management, local SQLite storage, bundled yt-dlp and FFmpeg engines, secure Electron IPC architecture, proper error handling, queue management, history, settings, notifications, diagnostics, logging, installer support, and maintainable modular source code.
+
+Prioritize:
+
+**Security → Stability → Performance → UX → Visual Quality → Maintainability**
+
+The final result should feel like a real professional desktop product named:
+
+# YTDown Pro
+
+**Fast. Simple. Powerful.**
+
+Allowed Download Categories
+
+Application legally accessible URLs se ye categories support kar sakta hai:
+
+1. Media Files
+MP4
+MKV
+AVI
+MOV
+WEBM
+MP3
+M4A
+WAV
+AAC
+FLAC
+OGG
+2. Documents
+PDF
+DOC
+DOCX
+XLS
+XLSX
+PPT
+PPTX
+TXT
+CSV
+JSON
+XML
+3. Archives
+ZIP
+RAR
+7Z
+TAR
+GZ
+4. Software & Installers
+EXE
+MSI
+APK
+DMG
+ISO
+5. Images
+JPG
+JPEG
+PNG
+WEBP
+GIF
+SVG
+BMP
+6. General Direct Downloads
+
+Any normal publicly accessible direct file URL, such as:
+
+https://example.com/file.zip
+https://example.com/document.pdf
+https://example.com/software.exe
+https://example.com/image.jpg
+Important Architecture Change
+
+Main application mein 2 Download Engines hone chahiye:
+
+YTDown Pro
+│
+├── Media Downloader
+│   ├── yt-dlp
+│   └── FFmpeg
+│
+└── Universal File Downloader
+    ├── HTTP
+    ├── HTTPS
+    ├── Redirect Support
+    ├── Resume Support
+    └── Multi-part Download
+Smart URL Detection
+
+System automatically detect kare:
+
+Media URL
+      ↓
+yt-dlp Engine
+
+Direct File URL
+      ↓
+Universal HTTP Downloader
+New Download Features
+Universal Download Manager
+Direct file download
+Large file download
+Resume interrupted downloads where server supports it
+Pause downloads where technically supported
+Multi-thread download where appropriate
+Download queue
+Multiple simultaneous downloads
+Redirect handling
+File size detection
+MIME type detection
+File extension detection
+Duplicate detection
+Existing file handling
+Retry failed downloads
+Speed limiting
+Bandwidth control
+Download scheduling
+Download priority
+Smart File Detection
+
+Before downloading:
+
+URL
+ ↓
+HEAD Request
+ ↓
+Content-Type Detection
+ ↓
+Content-Length Detection
+ ↓
+Filename Detection
+ ↓
+Download Engine Selection
+
+Example:
+
+Content-Type: application/pdf
+Filename: document.pdf
+
+→ Universal File Downloader
+Important Security Restriction
+
+Application ko DRM, authentication bypass, private content, CAPTCHA bypass ya protected content bypass nahi karna chahiye. Original prompt bhi specifically ye restriction define karta hai.
+
+Isliye best feature wording ye hogi:
+
+Download publicly accessible files and media that the user owns or is authorized to download.
+
+Recommended New Application Structure
+YTDown Pro
+│
+├── Media Downloader
+│   ├── yt-dlp Service
+│   └── FFmpeg Service
+│
+├── Universal File Downloader
+│   ├── HTTP Download Service
+│   ├── Resume Manager
+│   ├── Multi-part Download Manager
+│   ├── File Metadata Detector
+│   └── Download Validator
+│
+├── Smart URL Analyzer
+│
+├── Download Queue
+│
+├── Download Manager
+│
+├── File Manager
+│
+├── SQLite Database
+│
+├── History Manager
+│
+└── Security Manager

@@ -1,0 +1,92 @@
+{
+  "name": "ytdown-pro",
+  "version": "1.0.0",
+  "description": "YTDown Pro — Professional Windows Desktop Media Downloader & Converter",
+  "main": "src/main/main.js",
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron .",
+    "download-engines": "node scripts/download-engines.js",
+    "pack": "electron-builder --dir",
+    "dist": "cross-env CSC_IDENTITY_AUTO_DISCOVERY=false electron-builder --win --x64",
+    "dist:signed": "electron-builder --win --x64"
+  },
+  "keywords": [
+    "downloader",
+    "converter",
+    "media",
+    "ffmpeg",
+    "yt-dlp",
+    "electron",
+    "windows"
+  ],
+  "author": "YTDown Pro Team",
+  "license": "MIT",
+  "devDependencies": {
+    "cross-env": "^7.0.3",
+    "electron": "^33.2.1",
+    "electron-builder": "^25.1.8",
+    "jimp": "^0.22.12",
+    "png-to-ico": "^3.0.2"
+  },
+  "dependencies": {
+    "bootstrap": "^5.3.3",
+    "bootstrap-icons": "^1.11.3",
+    "sqlite3": "^5.1.7"
+  },
+  "build": {
+    "appId": "com.ytdownpro.app",
+    "productName": "YTDown Pro",
+    "copyright": "Copyright © 2026 Engineer Qasim Ahmad (Epic Developer)",
+    "directories": {
+      "output": "dist"
+    },
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "src/renderer/assets/icons/icon.ico",
+      "legalTrademarks": "YTDown Pro by Epic Developer",
+      "sign": null,
+      "signingHashAlgorithms": null
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": "always",
+      "createStartMenuShortcut": true,
+      "shortcutName": "YTDown Pro",
+      "installerIcon": "src/renderer/assets/icons/icon.ico",
+      "uninstallerIcon": "src/renderer/assets/icons/icon.ico",
+      "installerHeaderIcon": "src/renderer/assets/icons/icon.ico",
+      "deleteAppDataOnUninstall": false,
+      "runAfterFinish": true
+    },
+    "extraResources": [
+      {
+        "from": "src/engines",
+        "to": "engines",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "extension",
+        "to": "extension",
+        "filter": [
+          "**/*"
+        ]
+      }
+    ],
+    "files": [
+      "src/**/*",
+      "extension/**/*",
+      "package.json"
+    ]
+  }
+}

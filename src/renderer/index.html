@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https: http:; font-src 'self' data:;">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YTDown Pro</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link rel="stylesheet" href="../../node_modules/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../node_modules/bootstrap-icons/font/bootstrap-icons.css">
+
+    <!-- Custom Design Tokens & App Styles -->
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/animations.css">
+    <link rel="stylesheet" href="css/app.css">
+</head>
+
+<body>
+    <div class="app-shell">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="brand-icon">
+                    <img src="assets/icons/icon.png" alt="YTDown Pro Icon">
+                </div>
+                <div class="brand-text">
+                    <div class="fw-extrabold fs-5 text-primary-heading" data-i18n="app_title">YTDown Pro</div>
+                    <div class="text-muted fw-semibold" style="font-size: 11px;">v1.0 Pro • Media Downloader</div>
+                </div>
+            </div>
+
+            <ul class="nav-list">
+                <li>
+                    <button class="nav-item-btn active" data-target="dashboard" title="Dashboard">
+                        <i class="bi bi-grid-1x2-fill fs-5"></i>
+                        <span class="nav-text" data-i18n="dashboard">Dashboard</span>
+                    </button>
+                </li>
+                <li>
+                    <button class="nav-item-btn" data-target="downloads" title="Downloads & Queue">
+                        <i class="bi bi-download fs-5"></i>
+                        <span class="nav-text" data-i18n="downloads">Downloads & Queue</span>
+                        <span class="badge rounded-pill bg-primary ms-auto" id="queue-badge"
+                            style="display: none;">0</span>
+                    </button>
+                </li>
+                <li>
+                    <button class="nav-item-btn" data-target="history" title="History">
+                        <i class="bi bi-clock-history fs-5"></i>
+                        <span class="nav-text" data-i18n="history">History</span>
+                    </button>
+                </li>
+                <li>
+                    <button class="nav-item-btn" data-target="settings" title="Settings">
+                        <i class="bi bi-sliders fs-5"></i>
+                        <span class="nav-text" data-i18n="settings">Settings</span>
+                    </button>
+                </li>
+                <li>
+                    <button class="nav-item-btn" data-target="about" title="About & License">
+                        <i class="bi bi-info-circle-fill fs-5"></i>
+                        <span class="nav-text" data-i18n="about">About & License</span>
+                    </button>
+                </li>
+            </ul>
+
+            <div class="sidebar-footer">
+                <button
+                    class="btn btn-sm btn-outline-secondary w-100 py-2 d-flex align-items-center justify-content-center gap-2"
+                    id="sidebar-toggle" title="Toggle Sidebar">
+                    <i class="bi bi-layout-sidebar-inset"></i>
+                    <span class="nav-text small fw-semibold">Collapse</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Top Bar -->
+            <header class="top-bar">
+                <div class="d-flex align-items-center gap-3">
+                    <h5 class="m-0 fw-bold" id="page-title" data-i18n="dashboard">Dashboard</h5>
+                </div>
+                <div class="d-flex align-items-center gap-3">
+                    <div class="d-flex align-items-center gap-2 px-3 py-1 rounded-pill border"
+                        style="font-size: 12px; background-color: var(--surface-hover); color: var(--text-primary);">
+                        <span class="spinner-grow spinner-grow-sm text-success" id="engine-status-dot"></span>
+                        <span id="engine-status-label" class="fw-semibold">Engine: Ready</span>
+                    </div>
+                    <button class="btn btn-icon btn-outline-secondary rounded-circle" id="theme-toggle-btn"
+                        title="Toggle Light/Dark Theme">
+                        <i class="bi bi-moon-stars" id="theme-icon"></i>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Views Host -->
+            <div class="view-container">
+                <!-- VIEW 1: DASHBOARD -->
+                <section id="view-dashboard" class="view-panel animate-fade-in">
+
+                    <!-- Hero Header -->
+                    <div class="dash-hero mb-4">
+                        <div class="dash-hero-text">
+                            <h2 class="dash-title fw-bold">Welcome to <span class="grad-text">YTDown Pro</span></h2>
+                            <p class="text-muted mb-0">Universal Media & File Downloader — powered by yt-dlp + Universal Engine</p>
+                        </div>
+                        <div id="engine-pill" class="engine-status-pill">
+                            <span class="pulse-dot"></span>
+                            <span id="engine-pill-label">Engine Ready</span>
+                        </div>
+                    </div>
+
+                    <!-- Smart Clipboard Detector Banner -->
+                    <div id="clipboard-banner" class="clip-banner mb-3" style="display:none !important;">
+                        <div class="clip-banner-inner">
+                            <div class="clip-icon-wrap">
+                                <i class="bi bi-clipboard-check-fill"></i>
+                            </div>
+                            <div class="clip-info">
+                                <span class="clip-label">Clipboard URL Detected</span>
+                                <span id="clipboard-banner-text" class="clip-url-text"></span>
+                            </div>
+                            <div class="clip-tags ms-auto me-3" id="clipboard-meta-tags"></div>
+                            <button class="btn-clip-paste" id="clipboard-paste-btn">
+                                <i class="bi bi-lightning-charge-fill me-1"></i>Paste & Analyze
+                            </button>
+                            <button class="btn-clip-dismiss" id="clipboard-dismiss-btn">
+                                <i class="bi bi-x"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- URL Analyzer Card -->
+                    <div class="analyzer-card mb-4">
+                        <div class="analyzer-card-header">
+                            <div class="analyzer-icon-wrap">
+                                <i class="bi bi-search"></i>
+                            </div>
+                            <div>
+                                <div class="analyzer-card-title">Smart URL Analyzer</div>
+                                <div class="analyzer-card-sub">Paste any media, file or direct download link</div>
+                            </div>
+                            <div id="url-live-meta" class="url-live-meta ms-auto" style="display:none;"></div>
+                        </div>
+
+                        <div class="url-input-wrap">
+                            <i class="bi bi-link-45deg url-input-prefix-icon"></i>
+                            <input type="text" class="url-input-field" id="url-input" placeholder="https://youtube.com/watch?v=... or https://example.com/file.rar" autocomplete="off" spellcheck="false">
+                            <div class="url-action-group">
+                                <button class="url-btn url-btn-ghost" id="btn-paste" title="Paste from clipboard">
+                                    <i class="bi bi-clipboard"></i>
+                                </button>
+                                <button class="url-btn url-btn-ghost" id="btn-clear" title="Clear">
+                                    <i class="bi bi-x-circle"></i>
+                                </button>
+                                <button class="url-btn url-btn-accent" id="btn-analyze">
+                                    <i class="bi bi-radar me-1"></i>Analyze
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="url-status-bar">
+                            <span><i class="bi bi-shield-check text-success me-1"></i>Publicly accessible URLs only</span>
+                            <span id="url-validation-msg" class="url-status-msg">Enter URL to begin</span>
+                        </div>
+                    </div>
+
+                    <!-- Analyzing Spinner -->
+                    <div id="analyze-spinner" class="analyze-loading-card" style="display:none;">
+                        <div class="analyze-orb">
+                            <div class="orb-ring ring-1"></div>
+                            <div class="orb-ring ring-2"></div>
+                            <div class="orb-ring ring-3"></div>
+                            <i class="bi bi-radar orb-icon"></i>
+                        </div>
+                        <h5 class="fw-bold mt-3 mb-1">Analyzing URL...</h5>
+                        <p class="text-muted mb-0 small">Detecting type · Fetching metadata · Selecting engine</p>
+                    </div>
+
+                    <!-- Media / File Result Card -->
+                    <div id="media-card" class="result-card mb-4" style="display:none;">
+                        <div class="result-card-body">
+
+                            <!-- Left: Thumbnail or File Icon -->
+                            <div class="result-thumb-col">
+                                <div class="result-thumb-wrap">
+                                    <img id="media-thumb" src="" alt="Thumbnail" class="result-thumb-img">
+                                    <div id="media-category-hero" class="result-file-hero" style="display:none;"></div>
+                                    <span id="media-duration" class="result-duration-badge">00:00</span>
+                                </div>
+                                <div class="result-meta mt-2">
+                                    <h6 class="result-title fw-bold mb-1" id="media-title">Title</h6>
+                                    <p class="result-channel text-muted small mb-2" id="media-channel">Channel</p>
+                                    <div class="d-flex gap-2 flex-wrap">
+                                        <span class="result-badge" id="media-domain">Source</span>
+                                        <span class="result-badge result-badge-engine" id="media-engine-badge">Engine</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Divider -->
+                            <div class="result-divider"></div>
+
+                            <!-- Right: Options -->
+                            <div class="result-options-col">
+                                <div class="options-section mb-3">
+                                    <label class="options-label">FORMAT</label>
+                                    <div class="format-grid" id="format-options">
+                                        <div class="format-card-option active" data-fmt="MP4">MP4</div>
+                                        <div class="format-card-option" data-fmt="WEBM">WEBM</div>
+                                        <div class="format-card-option" data-fmt="MP3">MP3</div>
+                                        <div class="format-card-option" data-fmt="M4A">M4A</div>
+                                    </div>
+                                </div>
+
+                                <div class="options-section mb-3">
+                                    <label class="options-label">QUALITY</label>
+                                    <select class="options-select" id="quality-select">
+                                        <option value="1080p">1080p Full HD (Recommended)</option>
+                                        <option value="720p">720p HD</option>
+                                        <option value="480p">480p SD</option>
+                                    </select>
+                                </div>
+
+                                <div class="options-section mb-4">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <label class="options-label m-0">SAVE TO</label>
+                                        <div class="form-check form-switch m-0 d-flex align-items-center gap-1" style="font-size: 11px;">
+                                            <input class="form-check-input" type="checkbox" id="check-remember-folder" checked>
+                                            <label class="form-check-label text-muted fw-semibold" for="check-remember-folder">Remember location</label>
+                                        </div>
+                                    </div>
+                                    <div class="save-path-row">
+                                        <div class="save-path-display">
+                                            <i class="bi bi-folder2 me-2 text-accent"></i>
+                                            <span id="save-path-input" class="save-path-text">Default Downloads Folder</span>
+                                        </div>
+                                        <button class="btn-change-folder" id="btn-change-folder">
+                                            <i class="bi bi-folder-symlink me-1"></i>Change
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <button class="btn-download-now" id="btn-start-download">
+                                    <i class="bi bi-download me-2 fs-5"></i>Download Now
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- VIEW 2: DOWNLOADS & QUEUE -->
+                <section id="view-downloads" class="view-panel" style="display: none;">
+                    <div class="dq-header mb-4">
+                        <div>
+                            <h4 class="fw-bold mb-0">Downloads <span class="grad-text">&amp; Queue</span></h4>
+                            <p class="text-muted small m-0">Monitor active downloads and queue progress in real time</p>
+                        </div>
+                        <div class="dq-controls ms-auto d-flex align-items-center gap-2 flex-wrap">
+                            <div class="dq-filter-group">
+                                <button class="dq-filter-btn active" data-filter="all">All</button>
+                                <button class="dq-filter-btn" data-filter="DOWNLOADING">
+                                    <span class="dq-live-dot"></span>Live
+                                </button>
+                                <button class="dq-filter-btn" data-filter="PAUSED">Paused</button>
+                                <button class="dq-filter-btn" data-filter="COMPLETED">Completed</button>
+                            </div>
+                            <div class="btn-group btn-group-sm">
+                                <button class="btn btn-sm btn-outline-secondary" id="btn-pause-all" title="Pause All Downloads">
+                                    <i class="bi bi-pause-fill"></i> Pause All
+                                </button>
+                                <button class="btn btn-sm btn-outline-secondary" id="btn-resume-all" title="Resume All Downloads">
+                                    <i class="bi bi-play-fill"></i> Resume All
+                                </button>
+                                <button class="btn btn-sm btn-outline-danger" id="btn-clear-completed" title="Clear Completed Downloads">
+                                    <i class="bi bi-trash"></i> Clear Completed
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="downloads-list-container" class="dq-list-container">
+                        <!-- Dynamic Download Cards inserted here -->
+                    </div>
+
+                    <!-- Empty State -->
+                    <div id="downloads-empty-state" class="dq-empty-state">
+                        <div class="dq-empty-orb">
+                            <i class="bi bi-cloud-arrow-down dq-empty-icon"></i>
+                        </div>
+                        <h5 class="fw-bold mt-3 mb-1">No Downloads Yet</h5>
+                        <p class="text-muted small">Paste any URL on the Dashboard to start downloading files and media.</p>
+                        <button class="btn-go-dashboard" id="btn-go-dashboard">
+                            <i class="bi bi-arrow-left-circle me-2"></i>Go to Dashboard
+                        </button>
+                    </div>
+                </section>
+
+
+                <!-- VIEW 3: HISTORY -->
+                <section id="view-history" class="view-panel" style="display: none;">
+                    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+                        <div>
+                            <h4 class="fw-bold mb-0">Download <span class="grad-text">History</span></h4>
+                            <p class="text-muted small m-0">View, search, and manage completed and past downloads</p>
+                        </div>
+                        <button class="btn btn-sm btn-outline-danger hover-lift" id="btn-clear-history">
+                            <i class="bi bi-trash me-1"></i> Clear All History
+                        </button>
+                    </div>
+
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-7">
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-search"></i></span>
+                                <input type="text" class="form-control" id="history-search"
+                                    placeholder="Search downloads by title or filename..." data-i18n="search_placeholder">
+                            </div>
+                        </div>
+                        <div class="col-md-5">
+                            <select class="form-select" id="history-format-filter">
+                                <option value="all">All Formats &amp; Categories</option>
+                                <option value="mp4">🎬 MP4 Videos</option>
+                                <option value="webm">🎬 WEBM Videos</option>
+                                <option value="mp3">🎵 MP3 Audio</option>
+                                <option value="m4a">🎵 M4A Audio</option>
+                                <option value="pdf">📄 PDF Documents</option>
+                                <option value="zip">📦 ZIP / RAR Archives</option>
+                                <option value="exe">⚙️ Software &amp; Apps</option>
+                                <option value="jpg">🖼️ Images</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div id="history-list-container" class="dq-list-container">
+                        <!-- History items -->
+                    </div>
+
+                    <div id="history-empty-state" class="dq-empty-state">
+                        <div class="dq-empty-orb">
+                            <i class="bi bi-journal-x dq-empty-icon"></i>
+                        </div>
+                        <h5 class="fw-bold mt-3 mb-1" data-i18n="no_history">No download history found</h5>
+                        <p class="text-muted small">Completed downloads will appear here automatically.</p>
+                    </div>
+                </section>
+
+                <!-- VIEW 4: SETTINGS & DIAGNOSTICS -->
+                <section id="view-settings" class="view-panel" style="display: none;">
+                    <h4 class="fw-bold mb-4" data-i18n="settings">Settings</h4>
+
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <!-- Preferences Card -->
+                            <div class="glass-card mb-4">
+                                <h6 class="fw-bold border-bottom border-secondary pb-2 mb-3"><i
+                                        class="bi bi-sliders me-2"></i> General Preferences</h6>
+                                <div class="mb-3">
+                                    <label class="form-label small text-muted" data-i18n="max_concurrent">Maximum
+                                        Simultaneous Downloads</label>
+                                    <select class="form-select" id="setting-concurrent">
+                                        <option value="1">1 Download at a time</option>
+                                        <option value="2">2 Concurrent Downloads</option>
+                                        <option value="3" selected>3 Concurrent Downloads</option>
+                                        <option value="5">5 Concurrent Downloads</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label small text-muted" data-i18n="language">Language</label>
+                                    <select class="form-select" id="setting-language">
+                                        <option value="en">English</option>
+                                        <option value="ur">Urdu (اردو)</option>
+                                        <option value="ar">Arabic (العربية)</option>
+                                        <option value="es">Spanish (Español)</option>
+                                    </select>
+                                </div>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="setting-notifications" checked>
+                                    <label class="form-check-label small" for="setting-notifications">Desktop
+                                        Notifications</label>
+                                </div>
+                            </div>
+
+                            <!-- Appearance Card -->
+                            <div class="glass-card mb-4">
+                                <h6 class="fw-bold border-bottom border-secondary pb-2 mb-3"><i
+                                        class="bi bi-palette me-2"></i> <span data-i18n="appearance">Appearance</span>
+                                </h6>
+                                <div class="mb-3">
+                                    <label class="form-label small text-muted">Theme</label>
+                                    <select class="form-select" id="setting-theme">
+                                        <option value="dark" data-i18n="theme_dark">Dark Theme</option>
+                                        <option value="light" data-i18n="theme_light">Light Theme</option>
+                                        <option value="system" data-i18n="theme_system">Follow Windows System</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Chrome Extension Companion Card -->
+                            <div class="glass-card">
+                                <h6 class="fw-bold border-bottom border-secondary pb-2 mb-3"><i
+                                        class="bi bi-puzzle-fill me-2 text-primary"></i> Chrome Extension Integration
+                                </h6>
+                                <p class="text-muted small mb-3">Install the YTDown Pro Chrome Companion extension to
+                                    auto-grab video links and 1-click download directly from your browser.</p>
+                                <div class="d-flex gap-2">
+                                    <button class="btn btn-sm btn-primary flex-grow-1" id="btn-open-extension-folder">
+                                        <i class="bi bi-folder-symlink me-1"></i> Open Extension Folder
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <!-- Engine Diagnostics Card -->
+                            <div class="glass-card">
+                                <div
+                                    class="d-flex justify-content-between align-items-center border-bottom border-secondary pb-2 mb-3">
+                                    <h6 class="fw-bold m-0"><i class="bi bi-cpu me-2"></i> <span
+                                            data-i18n="engine_status">Engine Diagnostics</span></h6>
+                                    <button class="btn btn-sm btn-outline-secondary" id="btn-test-engine">
+                                        <i class="bi bi-arrow-repeat"></i> Test Engine
+                                    </button>
+                                </div>
+
+                                <div class="list-group list-group-flush bg-transparent">
+                                    <div
+                                        class="list-group-item bg-transparent text-white border-secondary d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <div class="fw-semibold">yt-dlp Engine</div>
+                                            <div class="text-muted small" id="diag-ytdlp-ver">Checking...</div>
+                                        </div>
+                                        <span class="badge bg-success" id="diag-ytdlp-status">Ready</span>
+                                    </div>
+                                    <div
+                                        class="list-group-item bg-transparent border-secondary d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <div class="fw-semibold">FFmpeg Converter</div>
+                                            <div class="text-muted small" id="diag-ffmpeg-ver">Checking...</div>
+                                        </div>
+                                        <span class="badge bg-success" id="diag-ffmpeg-status">Ready</span>
+                                    </div>
+                                    <div
+                                        class="list-group-item bg-transparent border-secondary d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <div class="fw-semibold">FFprobe Inspector</div>
+                                            <div class="text-muted small" id="diag-ffprobe-ver">Checking...</div>
+                                        </div>
+                                        <span class="badge bg-success" id="diag-ffprobe-status">Ready</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+            </div>
+            </section>
+
+            <!-- VIEW 5: ABOUT & DEVELOPER CERTIFICATE -->
+            <section id="view-about" class="view-panel animate-fade-in" style="display: none;">
+
+                <!-- Hero Banner -->
+                <div class="about-hero mb-4 position-relative overflow-hidden">
+                    <div class="about-hero-bg-glow"></div>
+                    <div class="about-hero-inner position-relative z-1">
+                        <div class="about-hero-text">
+                            <div class="d-flex align-items-center gap-2 mb-2 flex-wrap">
+                                <span class="about-release-badge">STANDALONE DESKTOP RELEASE v1.0.0</span>
+                                <span
+                                    class="badge bg-success-subtle text-success border border-success-subtle px-3 py-1 rounded-pill"><i
+                                        class="bi bi-patch-check-fill me-1"></i>Official 2026 Build</span>
+                            </div>
+                            <h1 class="about-title display-5 fw-extrabold text-white mb-2">YTDown Pro</h1>
+                            <p class="about-subtitle text-white-50 fs-5 mb-3">Professional Windows Desktop Media
+                                Downloader & Converter Engine</p>
+                            <div class="d-flex gap-2 flex-wrap">
+                                <span class="badge bg-white text-primary fw-bold px-3 py-2 shadow-sm"><i
+                                        class="bi bi-shield-check me-1 text-primary"></i>MIT Licensed</span>
+                                <span class="badge bg-white text-success fw-bold px-3 py-2 shadow-sm"><i
+                                        class="bi bi-cpu-fill me-1 text-success"></i>100% Local Engine</span>
+                                <span class="badge bg-white text-dark fw-bold px-3 py-2 shadow-sm"><i
+                                        class="bi bi-windows me-1 text-primary"></i>Windows 10 / 11 64-Bit</span>
+                            </div>
+                        </div>
+                        <div class="about-hero-icon d-none d-md-block">
+                            <img src="assets/icons/icon.png" alt="YTDown Pro" class="about-app-icon animate-pulse">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Developer & Specs Grid -->
+                <div class="row g-4 mb-4">
+
+                    <!-- Developer Showcase Card -->
+                    <div class="col-lg-6">
+                        <div class="glass-card about-dev-card h-100 p-4 border-accent">
+                            <div class="about-dev-header d-flex align-items-center gap-3 mb-3">
+                                <div class="about-dev-avatar-wrap position-relative">
+                                    <img src="assets/images/developer_badge.png"
+                                        alt="Engineer Qasim Ahmad - Epic Developer"
+                                        class="about-dev-avatar rounded-circle shadow-lg"
+                                        style="width: 88px; height: 88px; border: 3px solid var(--accent);">
+                                    <span
+                                        class="about-dev-status-dot position-absolute bottom-0 end-0 bg-success border border-white rounded-circle p-2"
+                                        title="Active Developer"></span>
+                                </div>
+                                <div class="about-dev-info">
+                                    <span class="badge bg-primary text-uppercase px-3 py-1 rounded-pill mb-1"
+                                        style="font-size: 11px; letter-spacing: 1px;" data-i18n="developer_role">⚡ Epic
+                                        Developer</span>
+                                    <h3 class="about-dev-name fw-bold m-0 text-primary" data-i18n="developer_name">
+                                        Engineer Qasim Ahmad</h3>
+                                    <div class="text-muted fw-semibold" data-i18n="developer_title">Lead Engineer &
+                                        Software Architect</div>
+                                </div>
+                            </div>
+
+                            <div class="about-contact-box p-3 rounded-3 border mb-3 bg-body-tertiary">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <div class="text-muted text-uppercase fw-bold"
+                                            style="font-size: 10px; letter-spacing: 0.5px;"><i
+                                                class="bi bi-envelope-fill me-1 text-primary"></i> Official Contact
+                                            Email</div>
+                                        <div class="fw-bold fs-6 text-primary" id="developer-email">
+                                            info.virtuspk@gmail.com</div>
+                                    </div>
+                                    <button class="btn btn-sm btn-outline-primary rounded-pill px-3"
+                                        id="btn-copy-email">
+                                        <i class="bi bi-clipboard me-1"></i> Copy
+                                    </button>
+                                </div>
+                            </div>
+
+                            <button class="btn-custom btn-accent w-100 justify-content-center py-3 fs-6 rounded-3"
+                                id="btn-open-certificate">
+                                <i class="bi bi-patch-check-fill fs-5 me-2"></i>
+                                <span data-i18n="view_certificate">Open 3D MIT License Certificate</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Software Architecture Card -->
+                    <div class="col-lg-6">
+                        <div class="glass-card h-100 p-4">
+                            <h6
+                                class="fw-bold mb-3 pb-2 border-bottom d-flex align-items-center justify-content-between">
+                                <span><i class="bi bi-cpu-fill text-primary me-2"></i> Architecture & Engine
+                                    Stack</span>
+                                <span class="badge bg-success">v1.0.0 Production</span>
+                            </h6>
+                            <div class="about-stack-list">
+                                <div
+                                    class="about-stack-row d-flex justify-content-between align-items-center py-2 border-bottom">
+                                    <span class="text-muted">Desktop Runtime:</span>
+                                    <span class="fw-semibold">Electron 33 + Node.js 24</span>
+                                </div>
+                                <div
+                                    class="about-stack-row d-flex justify-content-between align-items-center py-2 border-bottom">
+                                    <span class="text-muted">Media Downloader Engine:</span>
+                                    <span class="badge bg-primary">yt-dlp (v2026.08.19)</span>
+                                </div>
+                                <div
+                                    class="about-stack-row d-flex justify-content-between align-items-center py-2 border-bottom">
+                                    <span class="text-muted">Media Converter Engine:</span>
+                                    <span class="badge bg-info text-dark">FFmpeg + FFprobe GPL</span>
+                                </div>
+                                <div
+                                    class="about-stack-row d-flex justify-content-between align-items-center py-2 border-bottom">
+                                    <span class="text-muted">Database Engine:</span>
+                                    <span class="fw-semibold">SQLite 3 Local DB</span>
+                                </div>
+                                <div class="about-stack-row d-flex justify-content-between align-items-center py-2">
+                                    <span class="text-muted">Software Licensing:</span>
+                                    <span class="badge bg-warning text-dark fw-bold">MIT Open Source</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </section>
+    </div>
+    </main>
+    </div>
+
+    <!-- Toast Notifications Host -->
+    <div class="toast-container-custom" id="toast-host"></div>
+
+    <!-- Digital Verification Certificate Modal -->
+    <div class="modal fade" id="certificateModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content"
+                style="border: 3px solid #eab308; background: linear-gradient(145deg, var(--surface), var(--bg-primary));">
+                <div class="modal-header border-0 pb-0">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-center p-5">
+                    <!-- Certificate Header -->
+                    <div class="mx-auto mb-3"
+                        style="width: 80px; height: 80px; background: linear-gradient(135deg, #eab308, #ca8a04); border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 24px rgba(234, 179, 8, 0.4);">
+                        <i class="bi bi-award-fill text-white fs-1"></i>
+                    </div>
+                    <span class="badge bg-warning text-dark text-uppercase fw-bold px-3 py-1 mb-2"
+                        style="letter-spacing: 2px;">OFFICIAL CERTIFICATE</span>
+                    <h3 class="fw-bold mb-1" style="font-family: serif;">Digital Authentication Certificate</h3>
+                    <p class="text-muted small mb-4">YTDown Pro Desktop Media Downloader & Converter</p>
+
+                    <!-- 3D MIT License Certificate Artwork -->
+                    <div class="mb-4 overflow-hidden rounded-3 border border-warning shadow-lg"
+                        style="max-height: 380px;">
+                        <img src="assets/images/mit_certificate_3d.png"
+                            alt="3D MIT License Certificate - Engineer Qasim Ahmad" class="w-100 object-fit-cover">
+                    </div>
+
+                    <!-- Certificate Details Box -->
+                    <div class="cert-details-box p-4 rounded-3 mb-4 text-start">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="cert-detail-label">Lead Engineer &amp; Architect:</label>
+                                <div class="cert-detail-value" style="color: var(--accent); font-size: 17px;">Engineer
+                                    Qasim Ahmad</div>
+                                <span class="badge bg-primary text-uppercase mt-1" style="font-size: 10px;">Epic
+                                    Developer</span>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="cert-detail-label">Official Contact Email:</label>
+                                <div class="cert-detail-value">info.virtuspk@gmail.com</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="cert-detail-label">Software Integrity &amp; License:</label>
+                                <div class="cert-detail-value"><i class="bi bi-shield-check text-success me-1"></i><span
+                                        class="text-success fw-bold">MIT License Verified</span></div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="cert-detail-label">Issued Platform:</label>
+                                <div class="cert-detail-value">Windows 10 / 11 (64-bit Standalone)</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <p class="text-muted text-xs mb-4">
+                        This digital certificate confirms that <strong>YTDown Pro</strong> is built as a completely
+                        local, standalone Windows application engineered by <strong>Engineer Qasim Ahmad</strong>. All
+                        media operations are executed locally using bundled yt-dlp (Unlicense) and FFmpeg binaries.
+                    </p>
+
+                    <div class="d-flex justify-content-between align-items-center pt-3 border-top">
+                        <div class="text-start">
+                            <div class="fw-bold text-xs text-muted">CERTIFICATE ID:</div>
+                            <div class="font-monospace text-xs fw-bold">YTD-PRO-2026-QA-EPIC</div>
+                        </div>
+                        <button class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close Certificate</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap 5 JS Bundle -->
+    <script src="../../node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- App JavaScript Modules -->
+    <script src="js/i18n.js"></script>
+    <script src="js/dashboard.js"></script>
+    <script src="js/downloads.js"></script>
+    <script src="js/history.js"></script>
+    <script src="js/settings.js"></script>
+    <script src="js/app.js"></script>
+</body>
+
+</html>

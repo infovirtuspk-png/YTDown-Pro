@@ -1,0 +1,10 @@
+node_modules/
+dist/
+release/
+*.db
+*.log
+src/engines/yt-dlp/yt-dlp.exe
+src/engines/ffmpeg/ffmpeg.exe
+src/engines/ffmpeg/ffprobe.exe
+.DS_Store
+Thumbs.db

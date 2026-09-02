@@ -1,8 +1,8 @@
 # ⚡ YTDown Pro — Professional Windows Desktop Media Downloader & Converter
 
 <p align="center">
-  <a href="https://github.com/infovirtuspk-png/YTDown-Pro/releases/download/v1.0.0/YTDown.Pro.Setup.1.0.0.exe">
-    <img src="https://img.shields.io/badge/📥%20DOWNLOAD%20YTDown%20Pro%20Setup%20v1.0.0%20(.EXE)-0078D6?style=for-the-badge&logo=windows&logoColor=white" alt="Download Windows Installer (.exe)" height="45">
+  <a href="https://github.com/infovirtuspk-png/YTDown-Pro/releases/download/v1.0.0/YTDown.Pro.Setup.1.0.0.exe" target="_blank" rel="noopener noreferrer">
+    <img src="https://img.shields.io/badge/📥%20DOWNLOAD%20YTDown%20Pro%20Setup%20v1.0.0%20(.EXE)-0078D6?style=for-the-badge&logo=windows&logoColor=white" alt="Download Windows Installer (.exe)" height="48">
   </a>
 </p>
 
@@ -22,15 +22,18 @@
 
 ## 📥 Direct Installer Download
 
-Click the button below to download the official standalone Windows Installer executable:
+Click either link or button below to immediately start downloading the official standalone Windows Installer executable:
 
 <p align="center">
-  <a href="https://github.com/infovirtuspk-png/YTDown-Pro/releases/download/v1.0.0/YTDown.Pro.Setup.1.0.0.exe">
-    <img src="https://img.shields.io/badge/⚡%20GET%20YTDown%20Pro%20INSTALLER%20(296%20MB)-0078D6?style=for-the-badge&logo=windows&logoColor=white" alt="Download YTDown Pro Setup Executable" height="50">
+  <a href="https://github.com/infovirtuspk-png/YTDown-Pro/releases/download/v1.0.0/YTDown.Pro.Setup.1.0.0.exe" target="_blank" rel="noopener noreferrer">
+    <img src="https://img.shields.io/badge/⚡%20CLICK%20HERE%20TO%20DOWNLOAD%20YTDown.Pro.Setup.1.0.0.exe%20(283%20MB)-0078D6?style=for-the-badge&logo=windows&logoColor=white" alt="Download YTDown Pro Setup Executable" height="52">
   </a>
 </p>
 
-> **Note**: Comes pre-packaged with `yt-dlp`, `FFmpeg`, `FFprobe`, and the companion Chrome/Edge extension. No extra software required!
+### 🔗 Direct File Link:
+👉 [**https://github.com/infovirtuspk-png/YTDown-Pro/releases/download/v1.0.0/YTDown.Pro.Setup.1.0.0.exe**](https://github.com/infovirtuspk-png/YTDown-Pro/releases/download/v1.0.0/YTDown.Pro.Setup.1.0.0.exe)
+
+> **Note**: Pre-packaged with `yt-dlp`, `FFmpeg`, `FFprobe`, and the companion Chrome/Edge extension. No extra setup required!
 
 ---
 
@@ -83,7 +86,7 @@ Click the button below to download the official standalone Windows Installer exe
 
 ## 🚀 Installation & Browser Extension Setup
 
-1. Download the latest installer: [**YTDown Pro Setup 1.0.0.exe**](https://github.com/infovirtuspk-png/YTDown-Pro/releases/download/v1.0.0/YTDown.Pro.Setup.1.0.0.exe).
+1. Click the download button above or use the direct link: [**YTDown.Pro.Setup.1.0.0.exe**](https://github.com/infovirtuspk-png/YTDown-Pro/releases/download/v1.0.0/YTDown.Pro.Setup.1.0.0.exe).
 2. Double-click the `.exe` installer to launch the Setup Wizard.
 3. Select your desired installation folder, shortcut options, and click **Install**.
 4. Launch YTDown Pro directly from your Desktop or Start Menu!

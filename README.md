@@ -1,15 +1,36 @@
-<<<<<<< HEAD
-# YTDown-Pro
-=======
 # ⚡ YTDown Pro — Professional Windows Desktop Media Downloader & Converter
 
-![YTDown Pro Version](https://img.shields.io/badge/version-1.0.0-blue.svg?style=for-the-badge)
-![License](https://img.shields.io/badge/license-MIT-green.svg?style=for-the-badge)
-![Platform](https://img.shields.io/badge/platform-Windows%2010%2F11%20x64-0078D6.svg?style=for-the-badge)
-![Electron](https://img.shields.io/badge/framework-Electron%2033-47848F.svg?style=for-the-badge)
-![SQLite](https://img.shields.io/badge/database-SQLite3-003B57.svg?style=for-the-badge)
+<p align="center">
+  <a href="https://github.com/infovirtuspk-png/YTDown-Pro/releases/download/v1.0.0/YTDown.Pro.Setup.1.0.0.exe">
+    <img src="https://img.shields.io/badge/📥%20DOWNLOAD%20YTDown%20Pro%20Setup%20v1.0.0%20(.EXE)-0078D6?style=for-the-badge&logo=windows&logoColor=white" alt="Download Windows Installer (.exe)" height="45">
+  </a>
+</p>
+
+<p align="center">
+  <a href="https://github.com/infovirtuspk-png/YTDown-Pro/releases/tag/v1.0.0"><img src="https://img.shields.io/badge/version-1.0.0-blue.svg?style=for-the-badge" alt="Version"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-green.svg?style=for-the-badge" alt="License"></a>
+  <img src="https://img.shields.io/badge/platform-Windows%2010%2F11%20x64-0078D6.svg?style=for-the-badge" alt="Platform">
+  <img src="https://img.shields.io/badge/framework-Electron%2033-47848F.svg?style=for-the-badge" alt="Electron">
+  <img src="https://img.shields.io/badge/database-SQLite3-003B57.svg?style=for-the-badge" alt="SQLite">
+</p>
+
+---
 
 **YTDown Pro** is a state-of-the-art, high-performance desktop media downloading suite for Windows. Powered by dual engines (`yt-dlp` and a custom **Universal HTTP Range Downloader**), YTDown Pro captures videos, playlists, audio tracks, archives, documents, software, and images from over 1,000+ supported websites and direct download mirrors with real-time tracking, background downloading, and seamless browser integration.
+
+---
+
+## 📥 Direct Installer Download
+
+Click the button below to download the official standalone Windows Installer executable:
+
+<p align="center">
+  <a href="https://github.com/infovirtuspk-png/YTDown-Pro/releases/download/v1.0.0/YTDown.Pro.Setup.1.0.0.exe">
+    <img src="https://img.shields.io/badge/⚡%20GET%20YTDown%20Pro%20INSTALLER%20(296%20MB)-0078D6?style=for-the-badge&logo=windows&logoColor=white" alt="Download YTDown Pro Setup Executable" height="50">
+  </a>
+</p>
+
+> **Note**: Comes pre-packaged with `yt-dlp`, `FFmpeg`, `FFprobe`, and the companion Chrome/Edge extension. No extra software required!
 
 ---
 
@@ -60,12 +81,54 @@
 
 ---
 
-## 🚀 Download & Installation
+## 🚀 Installation & Browser Extension Setup
 
-1. Download the latest release installer: [**YTDown Pro Setup 1.0.0.exe**](https://github.com/infovirtuspk-png/YTDown-Pro/releases/download/v1.0.0/YTDown.Pro.Setup.1.0.0.exe) (or check [GitHub Releases](https://github.com/infovirtuspk-png/YTDown-Pro/releases)).
+1. Download the latest installer: [**YTDown Pro Setup 1.0.0.exe**](https://github.com/infovirtuspk-png/YTDown-Pro/releases/download/v1.0.0/YTDown.Pro.Setup.1.0.0.exe).
 2. Double-click the `.exe` installer to launch the Setup Wizard.
 3. Select your desired installation folder, shortcut options, and click **Install**.
 4. Launch YTDown Pro directly from your Desktop or Start Menu!
+
+### 🧩 Loading the Browser Companion Extension
+
+1. Open YTDown Pro and go to the **Settings** tab.
+2. Under **Chrome Extension Integration**, click **`Open Extension Folder`**.
+3. Open your browser (`chrome://extensions` or `edge://extensions`).
+4. Enable **Developer Mode** (toggle switch in the top-right corner).
+5. Click **Load Unpacked** and select the opened `extension` directory.
+
+---
+
+## 🛠️ Project Structure
+
+```
+YTDown-Pro/
+├── extension/                 # Chrome & Edge Companion Extension
+│   ├── background.js          # Service worker & context menus
+│   ├── content.js             # Magnetic floating badge & DOM grabber
+│   ├── content.css            # Floating badge glassmorphism styles
+│   └── manifest.json          # Extension Manifest V3
+├── src/
+│   ├── database/              # SQLite Database & Repositories
+│   │   ├── database.js        # Schema initialization & migrations
+│   │   └── repositories/      # Downloads & Settings CRUD queries
+│   ├── engines/               # Bundled Executables
+│   │   ├── yt-dlp/            # yt-dlp.exe
+│   │   └── ffmpeg/            # ffmpeg.exe & ffprobe.exe
+│   ├── main/                  # Electron Main Process
+│   │   ├── main.js            # App entry point & single-instance lock
+│   │   ├── window-manager.js  # Main window, splash, tray & native menu
+│   │   ├── ipc/               # IPC handlers
+│   │   └── services/          # Download manager, URL analyzer, Universal downloader
+│   ├── preload/               # Electron Preload script
+│   │   └── preload.js         # ContextBridge API exposure
+│   └── renderer/              # Web Frontend (HTML, CSS, JS)
+│       ├── index.html         # Single Page App shell
+│       ├── css/app.css        # Premium glassmorphism design system
+│       └── js/                # App, Dashboard, Downloads, History, Settings scripts
+├── scripts/                   # Build & Diagnostic Scripts
+├── package.json               # Dependencies & electron-builder NSIS config
+└── README.md                  # Project documentation
+```
 
 ---
 
@@ -106,4 +169,3 @@ The output installer will be generated at `dist/YTDown Pro Setup 1.0.0.exe`.
 <p align="center">
   <b>YTDown Pro © 2026 Engineer Qasim Ahmad. All Rights Reserved.</b>
 </p>
->>>>>>> 785a275 (feat: Release YTDown Pro v1.0.0 — Complete Desktop Media Downloader & Companion Extension)
